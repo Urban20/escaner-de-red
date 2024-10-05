@@ -1,13 +1,5 @@
 Instrucciones Generales:
-El script incluye un menú interactivo que permite ejecutar comandos desde la consola. Al iniciar el script, verás un logo y las opciones de comandos disponibles:
 
-____________________comandos__________________________
-| -cls: borrar consola                                  |
-| -salir: cerrar el programa                            |
-| -insertar ip: busca en Shodan o Fofa                  |
-| -b [numero]: buscar IPs                               |
-| -scan: descubre puertos de una IP privada o pública   |
-|______________________________________________________ |
 CSección 1: Comandos Básicos
 Estos comandos son útiles para interactuar con el programa de manera general.
 
