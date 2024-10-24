@@ -7,8 +7,9 @@ la herramienta cuenta con varios tipos de escaneos, los cuales son:
 
 3-escaneo selectivo
 
-Ademas el script realiza busquedas automaticas en shodan con el objetivo de respaldar informacion que pueda ser de utilidad,tambien cuenta con geolocalizacion de la ip en cuestion,reputacion de la ip, entre otras cosas 
-los parametros son:
+Ademas el script realiza busquedas automaticas en shodan con el objetivo de respaldar informacion que pueda ser de utilidad,tambien cuenta con geolocalizacion de la ip en cuestion,reputacion de la ip, entre otras cosas.
+
+Los parametros son:
 
 -h o --ayuda : muestra el mensaje de ayuda
 
