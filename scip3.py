@@ -3,7 +3,7 @@ import func
 from colorama import init,Fore
 import params
 import data
-
+import objetos as objs
 
 init()
 
@@ -21,8 +21,18 @@ if params.param.shodan:
         if params.param.ip != None:
             print(Fore.WHITE+'''
 #################################################''')
-            print(Fore.RED+'iniciando inteligencia en shodan')
-            func.shodan(params.param.ip)
+            print(Fore.RED+'iniciando crawler')
+            
+            #ip_num = ip numerica
+            ip_num = objs.ip.validacion(params.param.ip)
+            objs.ip.informacion()
+            objs.ip.reputacion()
+
+            #crawler
+            crawler = objs.Bot_Crawler(ip=ip_num)
+            crawler.scrapping_shodan()
+            crawler.obtener_links()
+
         else:
             print(Fore.RED+'especificar parametro [-ip]')
     except Exception as e:

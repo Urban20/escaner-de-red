@@ -4,15 +4,13 @@ import socket
 from subprocess import check_output,run
 import ipaddress
 from pprint import pp
-from bs4 import BeautifulSoup
 import keyboard
 from random import randint
-from base64 import b64encode
 import params
 import data
 from time import time,sleep
 from pandas import DataFrame
-
+from bs4 import BeautifulSoup
 
 deten = False   
 q = 0
@@ -114,7 +112,8 @@ def puerta_de_enlace():
 def confiabilidad_ip(ip):
     url = 'https://barracudacentral.org/lookups/lookup-reputation'
     if requests.get(url).status_code == 200:
-        print(Fore.WHITE+'confiabilidad de la ip:')
+        print(Fore.WHITE+'''
+confiabilidad de la ip:''')
         try:
             dir_ = ipaddress.ip_address(ip) 
 
@@ -148,7 +147,7 @@ def confiabilidad_ip(ip):
                 return 'no valida'
         except  ValueError:
             return 'no valida' 
-    
+
 def rastreo(url):
     try:
         datos = {'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36'}
@@ -163,187 +162,7 @@ def rastreo(url):
         return Fore.RED+'* no responde: tiempo agotado'
     except Exception :
         return Fore.RED+'* no responde'
-
-def shodan(arg_ip):   
-    ip = socket.gethostbyname(arg_ip)
-    if ipaddress.ip_address(ip).is_global:
-        
-
-        try:
-            ip_api= requests.get(f'http://ip-api.com/json/{ip}')
-            shodan= requests.get(f'https://internetdb.shodan.io/{ip}')
-            geo = requests.get(f'http://www.geoplugin.net/json.gp?ip={ip}')
-            
-            if shodan.status_code == 200:
-                print(Fore.GREEN+f'''
-                    
- ____                             
-|info|
-|____|
-
-#################################################                                                       
--ip:{shodan.json()['ip']}
--puertos: {shodan.json()['ports']}
--nombre de host:{shodan.json()['hostnames']}
--tipo de dispositivo:{shodan.json()['tags']}
-#################################################''')
-
-                if geo.status_code == 200 and ip_api.status_code == 200:
-                    print(
-    f'''
- _________________ 
-| geolocalizacion:|
-|_________________|
-
-#################################################
--pais:{geo.json()['geoplugin_countryName']}
--ciudad:{geo.json()['geoplugin_city']}
--estado/prov:{geo.json()['geoplugin_regionName']}
--ISP:{ip_api.json()['isp']}
--org:{ip_api.json()['org']}
-#################################################''')
-
-                    
-            
-        except Exception as e:
-            print(f'ocurrio un error: {e}')
-        finally:        
-            
-            fiabilidad = confiabilidad_ip(socket.gethostbyname(arg_ip))
-            if fiabilidad != None:
-                
-                match fiabilidad:
-                    case 'failure-message':
-                        print(Fore.RED+'en la lista negra')
-                    case 'no valida':
-                        print(Fore.YELLOW+'no se puede documentar la confiabilidad de la ip')
-                    case 'success-message':
-                        print(Fore.CYAN+'ip sin rastros maliciosos')
-
-    #bloque del webscrapping a shodan
-    print(Fore.RED+'''
-        
-###########                      
-shodan
-###########        ''')
-    try:
-        #fecha de cada escaneo de cada puerto
-        scan = []
-        #protocolos que se maneja /udp o tcp
-        proto = []
-        #informacion del puerto en cuestion
-        info = []
-        
-        html = BeautifulSoup(requests.get(f'https://www.shodan.io/host/{ip}').content,'html.parser')
-        contenido= html.find('div',class_='container u-full-width card-padding')
-        links = contenido.find_all('a',class_='link')
-        protocolos = contenido.findAll('span')
-        informacion = contenido.find_all('div',class_='card card-padding banner')
-        fecha_scan = html.find_all(class_='u-pull-right text-secondary')
-
-        for x in fecha_scan:
-            scan.append(x.text.split('T')[0].split('|')[1].strip())
-
-
-
-        for protocolo in protocolos: 
-            if 'tcp' in str(protocolo.get_text()) or 'udp' in str(protocolo.get_text()):
-
-                proto.append(protocolo.get_text().strip())
-            elif 'Last Seen' in str(protocolo.get_text()):
-                print(Fore.WHITE+f'ultimo scaneo de shodan: {protocolo.get_text().strip()[10:]}')
-
-        for info_ in informacion:
-            
-            
-            if 'html'in str(info_.get_text()) in str(info_.get_text()) and len(info_.get_text()) > 650:
-                info.append('posible pagina web')
-                    
-            elif 'ssh' in str(info_.get_text()).lower() and len(info_.get_text()) > 650:
-                info.append('posible servicio ssh')
-                
-            else:
-                
-                info.append(info_.get_text().strip())
-                    
-        for protocol,infor,fecha_scaneo in zip(proto,info,scan):
-            print(f'''
-#################################################''')
-            print(Fore.GREEN+f'''
-fecha del puerto escaneado: {fecha_scaneo}''')   
-            print(Fore.WHITE+f'''                    
- _________                    
-|protocolo|
-|_________|
-                
-{protocol[:-5].strip()} {protocol[-4:]}
- ____________________
-|servicio involucrado|
-|____________________|
-
-    {infor}
-#################################################''')
-        if links:       
-            print('''
-            
- _______________    
-|     links     |
-|_______________|
-            ''')
-        
-            for link in links:
-                url = link.get('href')
-                print(Fore.WHITE+str(url))
-                print(rastreo(url))
-
-    except AttributeError:
-        try:
-            
-            print(Fore.RED+'ningun puerto ni servicio encontrado')
-            if ipaddress.ip_address(params.param.ip).is_global:    
-                print(Fore.RED+'''
-#################################################                
-
-###########
-fofa
-###########
-                ''')
-
-                puerto_list= []
-                banners= []
-
-                codificiacion = b64encode(arg_ip.encode())
-                html_f= BeautifulSoup(requests.get(f'https://en.fofa.info/result?qbase64={codificiacion.decode()}').content,'html.parser')
-                banner = html_f.find_all('div',class_='el-scrollbar__view')
-                puerto = html_f.find_all('a',class_='hsxa-port')
-                
-
-
-                for x in banner:
-                    banners.append(x.text)
-                for y in puerto:
-                    puerto_list.append(y.get_text().strip())
-
-
-                for puert,ban in zip(puerto_list,banners):
-                    print(Fore.WHITE+f'''
-#################################################
-puerto:
-{puert}                    
-
-servicio:   
-
-{ban} ''')                   
-
-                print(Fore.WHITE+'''
-#################################################''')
-        
-            
-        except:
-            pass      
-    except Exception as e:
-        print(f'ocurrio un error: {e}')
-
+    
 def crear_informe(ip,puerto,titulo):
     try:
         informe=f'''
