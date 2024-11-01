@@ -150,9 +150,11 @@ descripciones = {
 
 cerradura = Lock()
 
-#nombre del archivo que se crea al utilizar el parametro -g en -b
+#nombre del archivo que se crea al ingresar 1 en los escaneos
 nombre_arch = 'scannerip.txt'
 
+#nombre del archivo perteneciente a el parametro -b
+nombre_b='ips_encontradas.txt'
 p_abiertos= []
 
 descrip = []

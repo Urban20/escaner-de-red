@@ -11,11 +11,26 @@ import data
 from time import time,sleep
 from pandas import DataFrame
 from bs4 import BeautifulSoup
+from subprocess import run
 
 deten = False   
 q = 0
 n = 0
 
+
+def abrir_arch():
+    try:
+        with open(data.nombre_b,'r') as arch:
+            print(arch.read())
+        
+    except FileNotFoundError:
+        print(Fore.RED+'no se pudo encontrar el archivo')
+
+
+def borrar_arch():
+    with open(data.nombre_b,'w') as arch:
+        arch.write('')
+        
 def ayuda():
     logo =Fore.RED+r'''
     
@@ -76,6 +91,10 @@ parametros:
                                            funcion: escanea TODOS los puertos existentes. 
                                            Desventaja/s: escaneo mucho mas lento, puede ser de alta carga para el pc si se lo combina con -a
                                            Ventaja/s: permite escanear todos los puertos
+
+  -cls, --borrar                           *borra el contenido del archivo .txt donde se guardan las ips encontradas
+ 
+  -abrir, --abrir                          *lee el archivo .txt donde se guardan las ips encontradas
     '''
     print('''
 ##################################################################################################''')
@@ -383,7 +402,7 @@ def buscar():
 
     '''
             if params.param.guardar:      
-                with open('ips_encontradas.txt','a') as ip_lista:
+                with open(data.nombre_b,'a') as ip_lista:
                     ip_lista.write(info_b)
 
             return info_b

@@ -170,6 +170,8 @@ SERVICIO EN ESCUCHA: ''')
                         url = link.get('href')
                         print(Fore.WHITE+str(url))
                         print(func.rastreo(url))
+            except AttributeError:
+                pass
             except Exception as e:
-                print(Fore.RED+'ocurrio un error en obtener_links')
+                print(Fore.RED+f'ocurrio un error en obtener_links: {e}')
 

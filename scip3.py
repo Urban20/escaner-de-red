@@ -131,6 +131,12 @@ if params.param.buscar != None and not params.param.normal:
 if params.param.ayuda:
     func.ayuda()
 
+if params.param.borrar:
+    func.borrar_arch()
+
+elif params.param.abrir:
+    func.abrir_arch()
+
 if params.param.lectura:
     try:
         with open(data.nombre_arch,'r') as registro:
