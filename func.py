@@ -26,7 +26,6 @@ def abrir_arch():
     except FileNotFoundError:
         print(Fore.RED+'no se pudo encontrar el archivo')
 
-
 def borrar_arch():
     with open(data.nombre_b,'w') as arch:
         arch.write('')
@@ -276,6 +275,7 @@ def scan_normal(ip,timeout):
                     continue
                 except Exception as e:
                     print(Fore.RED+f'[X]ocurrio un error:{e}')
+                    deten = True
                 
                 finally:
                     s.close()
