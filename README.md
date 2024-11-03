@@ -16,7 +16,7 @@ scip -ip www.google.com -a ---> realiza un escaneo "agresivo". Se trata de un es
 
 scip -ip www.google.com -n ---> es un escaneo mas lento pero mas fiable, hace ping a la ip y se basa en dicha latencia para regular la velocidad del escaneo, puede usarse con -i para obtener encabezados de paginas web, tambien puede usarse con -t para proporcionar manualmente un timeout
 
-##parametros:
+### parametros:
   -h, --ayuda                             *muestra este mensaje
 
   -s, --shodan                            *busqueda automatica en shodan, si no encuentra nada busca en fofa
