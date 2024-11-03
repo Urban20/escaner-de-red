@@ -1,4 +1,4 @@
-###### Escaner de red
+## Escaner de red
 scip es una herramienta que integra OSINT para redes informaticas , escaneos de red de forma activa utilizando socket , busquedas de ips de forma aleatorias con sus respectivos puertos y geolocalizacion.
 El objetivo de esto es crear una herramienta muy versatil en el campo de las redes informaticas.
 
