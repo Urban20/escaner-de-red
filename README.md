@@ -19,7 +19,7 @@ scip -ip www.google.com -n ---> es un escaneo mas lento pero mas fiable, hace pi
 ### parametros:
   -h, --ayuda                             *muestra este mensaje
 
-  -s, --shodan                            *busqueda automatica en shodan, si no encuentra nada busca en fofa
+  -s, --shodan                            *busqueda automatica en shodan
 
   -n, --normal                            *escaneo de puertos con el metodo normal
 
