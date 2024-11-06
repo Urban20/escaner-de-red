@@ -18,6 +18,52 @@ q = 0
 n = 0
 
 
+def preg_informe(ip,lista):
+    preg = str(input(Fore.WHITE+'[1]guardar informe ').strip())
+    if preg == '1':
+        titulo = str(input('titulo: '))
+        crear_informe(params.param.ip,data.p_abiertos,titulo)
+
+
+def cuerpo_scan(lista,ip,timeout):
+    #para el escaneo selectivo y normal: este es el formato para estos dos tipos de escaneos
+    global q
+    # q solo se utiliza con normal
+    global deten
+
+    for x in lista:
+        if not deten:
+            s = socket.socket()
+                    
+            s.settimeout(timeout)
+
+            try:
+                s.connect((ip,int(x)))
+                print(Fore.GREEN+f'[►] abierto: {x}')
+
+                print(f'uso mas comun: {data.descripciones[int(x)]}')
+                data.p_abiertos.append(int(x))
+            except KeyError:
+                print(f'uso mas comun: [desconocido]')
+                data.p_abiertos.append(int(x))
+            except TimeoutError:
+
+                continue
+            except PermissionError:
+                print(Fore.RED+f'[X] sin permisos para escanear el puerto: {x}')
+                continue  
+            except socket.gaierror as e:
+                print(Fore.RED+f'[X] error: {e}')
+                break
+            except Exception as e:
+                print(Fore.RED+f'[X] ocurrio un error:{e}')
+            finally:
+                s.close()
+                q+=1
+        else:
+            break
+
+
 def abrir_arch():
     try:
         with open(data.nombre_b,'r') as arch:
@@ -25,6 +71,7 @@ def abrir_arch():
         
     except FileNotFoundError:
         print(Fore.RED+'no se pudo encontrar el archivo')
+
 
 def borrar_arch():
     with open(data.nombre_b,'w') as arch:
@@ -246,44 +293,14 @@ def latencia(ip):
         return 1
 
 def scan_normal(ip,timeout):
-    global q
-    global deten
+    
     print(Fore.WHITE+f'escaneando puertos TCP de la ip: {ip}')
     try:
         for x in data.puertos :
-            if not deten:
-                s = socket.socket()
-                    
-                s.settimeout(timeout)
+            
+            cuerpo_scan(ip=ip,timeout=timeout,lista=data.puertos)
 
-                try:
-                    s.connect((ip.strip(),x))
-                    print(Fore.GREEN+f'[►] abierto: {x}')
-
-                    print(f'uso mas comun: {data.descripciones[x]}')
-                    
-                    data.p_abiertos.append(x)
-                except KeyError:
-                    print(f'uso mas comun: [desconocido]')
-                    data.p_abiertos.append(x)
-                    
-                except TimeoutError:                      
-                    continue
-                except PermissionError:
-                    print(Fore.RED+f'[X] sin permisos para escanear el puerto: {x}')
-                except ConnectionRefusedError:
-                    continue
-                except Exception as e:
-                    print(Fore.RED+f'[X]ocurrio un error:{e}')
-                    deten = True
                 
-                finally:
-                    s.close()
-                    q+=1
-        
-            else:
-                
-                break
     except Exception as e:
         print(Fore.RED+f'ocurrio un error:{e}')
 
@@ -295,44 +312,15 @@ def scan_normal(ip,timeout):
                     informacion(params.param.ip,x)
            
             sleep(1)
-            preg = str(input(Fore.WHITE+'[1]guardar informe ').strip())
-            if preg == '1':
-                titulo = str(input('titulo: '))
-                crear_informe(params.param.ip,data.p_abiertos,titulo)
+            
+            preg_informe(ip=params.param.ip,lista=data.p_abiertos)
                   
         data.p_abiertos.clear()
 
 def scan_selectivo(ip,timeout,puertos):
     
     eleccion = list(puertos.split(','))
-    for x in eleccion:
-
-        s = socket.socket()
-                
-        s.settimeout(timeout)
-
-        try:
-            s.connect((ip,int(x)))
-            print(Fore.GREEN+f'[►] abierto: {x}')
-
-            print(f'uso mas comun: {data.descripciones[int(x)]}')
-            data.p_abiertos.append(int(x))
-        except KeyError:
-            print(f'uso mas comun: [desconocido]')
-            data.p_abiertos.append(int(x))
-        except TimeoutError:
-            print(Fore.RED + f'tiempo agotado, puerto: {x}')
-            continue
-        except PermissionError:
-            print(Fore.RED+f'sin permisos para escanear el puerto: {x}')
-            continue  
-        except socket.gaierror as e:
-            print(Fore.RED+f'error: {e}')
-            break
-        except Exception as e:
-            print(Fore.RED+f'ocurrio un error:{e}')
-        finally:
-            s.close()
+    cuerpo_scan(ip=ip,lista=eleccion,timeout=timeout)
 
 def dataf():
     

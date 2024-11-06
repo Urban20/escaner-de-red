@@ -77,10 +77,7 @@ if params.param.agresivo:
                     for x in data.p_abiertos:
                         func.informacion(params.param.ip,x)
 
-                preg = str(input(Fore.WHITE+'[1]guardar informe ').strip())
-                if preg == '1':
-                    titulo = str(input('titulo: '))
-                    func.crear_informe(params.param.ip,data.p_abiertos,titulo)
+                func.preg_informe(ip=params.param.ip,lista=data.p_abiertos)
             else:
                 print(Fore.RED+'no se encontro ningun puerto')
             

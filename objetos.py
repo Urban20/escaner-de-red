@@ -11,7 +11,6 @@ init()
 class Ip():
     def __init__(self):
         self.ip = None
-        self.ip_global = False
         self.validado = False
     
     def validacion(self,ip):
