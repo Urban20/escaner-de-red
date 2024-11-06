@@ -7,6 +7,35 @@ import objetos as objs
 
 init()
 
+def inicio_scan(msg):
+    print(Fore.WHITE+f'''\n
+#################################################''')
+    print(Fore.WHITE+msg)
+
+    if params.param.timeout == None:
+        lat_prom= func.latencia(params.param.ip)
+        tim = func.timeout(lat_prom)
+    else:
+        tim = params.param.timeout
+    print(f'timeout: {tim}')
+    return tim
+
+
+def crear_crawler(ip):
+    print(Fore.WHITE+'''\n\n
+#################################################''')
+    print(Fore.RED+'iniciando crawler')
+    
+    #ip_num = ip numerica
+    ip_num = objs.ip.validacion(ip)
+    objs.ip.informacion()
+    objs.ip.reputacion()
+
+    #crawler
+    crawler = objs.Bot_Crawler(ip=ip_num)
+    crawler.scrapping_shodan()
+    crawler.obtener_links()
+
 
 if params.param.masivo:
     puertos = list(range(1,65535))
@@ -19,20 +48,11 @@ else:
 if params.param.shodan:
     try:
         if params.param.ip != None:
-            print(Fore.WHITE+'''
-#################################################''')
-            print(Fore.RED+'iniciando crawler')
-            
-            #ip_num = ip numerica
-            ip_num = objs.ip.validacion(params.param.ip)
-            objs.ip.informacion()
-            objs.ip.reputacion()
-
-            #crawler
-            crawler = objs.Bot_Crawler(ip=ip_num)
-            crawler.scrapping_shodan()
-            crawler.obtener_links()
-
+            if ',' in params.param.ip:
+                for x in params.param.ip.split(','):
+                    crear_crawler(x)   
+            else:       
+                crear_crawler(params.param.ip)
         else:
             print(Fore.RED+'especificar parametro [-ip]')
     except Exception as e:
@@ -43,7 +63,7 @@ if params.param.shodan:
 if params.param.agresivo:
     try:
         if params.param.ip != None:
-            print(Fore.WHITE+'''
+            print(Fore.WHITE+'''\n
 #################################################''')
             print(Fore.WHITE+'escaneo agresivo en curso...')
 
@@ -78,31 +98,20 @@ elif params.param.normal and params.param.buscar == None:
 
         hilo3 = threading.Thread(target=func.detener)
         
-        print(Fore.WHITE+f'''
-#################################################''')
-        print(Fore.WHITE+'escaneo normal en curso...')
-        
-        if params.param.timeout == None:
-            lat_prom= func.latencia(params.param.ip)
-            tim = func.timeout(lat_prom)
-        else:
-            tim = params.param.timeout
-        print(f'timeout: {tim}')
+        scan= inicio_scan(msg='escaneo normal en curso...')
+
         hilo3.start()   
-        func.scan_normal(params.param.ip,tim)   
+        func.scan_normal(params.param.ip,scan)   
         
     else:
         print(Fore.RED+'especificar parametro [-ip]') 
 
 elif params.param.selectivo:
     if params.param.ip != None:
-        print(Fore.WHITE+'''
-#################################################''')
-        print(Fore.WHITE+'escaneo selectivo en curso...')
-        lat_sel_prom = func.latencia(params.param.ip)
-        tim_sel = func.timeout(lat_sel_prom)
-        print(f'timeout: {tim_sel}')
-        func.scan_selectivo(params.param.ip,tim_sel,params.param.selectivo)
+
+        scan= inicio_scan(msg='escaneo selectivo en curso...')
+
+        func.scan_selectivo(params.param.ip,scan,params.param.selectivo)
         if params.param.info:
             for x in data.p_abiertos:
                 func.informacion(params.param.ip,x)

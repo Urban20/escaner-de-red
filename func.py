@@ -61,11 +61,11 @@ scip 3.0 es una herramienta de reconocimiento de redes desarrollada por Urb@n co
 parametros:
   -h, --ayuda                             *muestra este mensaje
 
-  -s, --shodan                            *busqueda automatica en shodan, si no encuentra nada busca en fofa
+  -s, --shodan                            *busqueda automatica en shodan
 
   -n, --normal                            *escaneo de puertos con el metodo normal
 
-  -a, --agresivo                          *escaneo agresivo: escanea todos los puertos en simultaneo.
+  -a, --agresivo                          *escaneo agresivo: escanea todos los puertos en simultaneo
                                             Desventaja/s: puede fallar
                                             Ventaja/s: extremadamente rapido
 
@@ -325,7 +325,10 @@ def scan_selectivo(ip,timeout,puertos):
             continue
         except PermissionError:
             print(Fore.RED+f'sin permisos para escanear el puerto: {x}')
-                
+            continue  
+        except socket.gaierror as e:
+            print(Fore.RED+f'error: {e}')
+            break
         except Exception as e:
             print(Fore.RED+f'ocurrio un error:{e}')
         finally:
