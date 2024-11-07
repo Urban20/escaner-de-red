@@ -60,6 +60,7 @@ if params.param.shodan:
 {e}
 ''')
 
+
 if params.param.agresivo:
     try:
         if params.param.ip != None:

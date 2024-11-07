@@ -1,4 +1,5 @@
 from threading import Lock
+import params
 
 status = {
     100: "Continue: El servidor ha recibido los encabezados de la solicitud y el cliente puede continuar enviando el cuerpo de la solicitud.",
@@ -46,7 +47,14 @@ status = {
 }
 
 #puertos utilizados comunmente
-puertos = [
+
+if params.param.masivo:
+    
+    puertos = list(range(1,65535))
+
+else:
+    
+    puertos = [
     1, 3, 4, 6, 7, 9, 13, 17, 19, 20, 21, 22, 23, 24, 25, 26, 30, 32, 33, 37, 42, 43, 49, 53, 70, 79, 80, 81, 82, 83, 84, 
     85, 88, 89, 90, 99, 100, 106, 109, 110, 111, 113, 119, 125, 135, 139, 143, 144, 146, 161, 163, 179, 199, 211, 212, 222,
     254, 255, 259, 264, 280, 301, 306, 311, 340, 366, 389, 406, 407, 416, 417, 425, 427, 443, 444, 445, 458, 464, 465, 481,
@@ -96,7 +104,6 @@ puertos = [
     51494, 52822, 52848, 52869, 54045, 54328, 55055, 55056, 55555, 55600, 56737, 56738, 57294, 57797, 58080, 60020, 60443,
     61532, 61900, 62078, 63331, 65129, 65389
     ]
-        
 
 descripciones = {
     20: 'Transferencia de datos.',
