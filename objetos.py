@@ -25,7 +25,7 @@ class Ip():
             
         except socket.gaierror:
 
-            print(Fore.RED+'el dominio proporcionado es incorrecto')
+            print(Fore.RED+'el dominio/ip proporcionado es incorrecto')
 
         except Exception as e:
             print(Fore.RED+f'ocurrio el siguiente error: {e}')

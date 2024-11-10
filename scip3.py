@@ -93,26 +93,30 @@ if params.param.agresivo:
         
 elif params.param.normal and params.param.buscar == None:
     if params.param.ip != None:
+        ip = objs.Ip()
+        ip.validacion(params.param.ip)
+        if ip.validado:
+            hilo3 = threading.Thread(target=func.detener)
+            
+            scan= inicio_scan(msg='escaneo normal en curso...')
 
-        hilo3 = threading.Thread(target=func.detener)
-        
-        scan= inicio_scan(msg='escaneo normal en curso...')
-
-        hilo3.start()   
-        func.scan_normal(params.param.ip,scan)   
-        
+            hilo3.start()   
+            func.scan_normal(params.param.ip,scan)   
+            
     else:
         print(Fore.RED+'especificar parametro [-ip]') 
 
 elif params.param.selectivo:
     if params.param.ip != None:
+        ip = objs.Ip()
+        ip.validacion(params.param.ip)
+        if ip.validado:
+            scan= inicio_scan(msg='escaneo selectivo en curso...')
 
-        scan= inicio_scan(msg='escaneo selectivo en curso...')
-
-        func.scan_selectivo(params.param.ip,scan,params.param.selectivo)
-        if params.param.info:
-            for x in data.p_abiertos:
-                func.informacion(params.param.ip,x)
+            func.scan_selectivo(params.param.ip,scan,params.param.selectivo)
+            if params.param.info:
+                for x in data.p_abiertos:
+                    func.informacion(params.param.ip,x)
 
     else:
         print(Fore.RED+'especificar parametro [-ip]')

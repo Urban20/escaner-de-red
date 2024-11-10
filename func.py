@@ -11,7 +11,7 @@ import data
 from time import time,sleep
 from pandas import DataFrame
 from bs4 import BeautifulSoup
-from subprocess import run
+
 
 deten = False   
 q = 0
@@ -57,6 +57,7 @@ def cuerpo_scan(lista,ip,timeout):
                 break
             except Exception as e:
                 print(Fore.RED+f'[X] ocurrio un error:{e}')
+                
             finally:
                 s.close()
                 q+=1
