@@ -5,6 +5,8 @@ import params
 import data
 import objetos as objs
 
+"version de termux/android"
+
 init()
 
 def inicio_scan(msg):
@@ -94,11 +96,8 @@ if params.param.agresivo:
 elif params.param.normal and params.param.buscar == None:
     if params.param.ip != None:
 
-        hilo3 = threading.Thread(target=func.detener)
-        
         scan= inicio_scan(msg='escaneo normal en curso...')
-
-        hilo3.start()   
+        threading.Thread(target=func.progreso).start()
         func.scan_normal(params.param.ip,scan)   
         
     else:
@@ -120,17 +119,14 @@ elif params.param.selectivo:
 if params.param.buscar != None and not params.param.normal:
     try:
         
-        hilo2 = threading.Thread(target=func.detener)
-        hilo2.start()
         while func.n < params.param.buscar:
-            if not func.deten:
-                busq = func.buscar()
-                data.elementos.clear()
-                if busq != None:
-                    print(busq)
-                    func.n+=1
-            else:
-                break
+            
+            busq = func.buscar()
+            data.elementos.clear()
+            if busq != None:
+                print(busq)
+                func.n+=1
+           
     except Exception as e:
         print(f'''ocurrio un error:
 {e}''')

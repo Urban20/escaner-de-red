@@ -1,6 +1,8 @@
 from threading import Lock
 import params
 
+"version de termux/android"
+
 status = {
     100: "Continue: El servidor ha recibido los encabezados de la solicitud y el cliente puede continuar enviando el cuerpo de la solicitud.",
     101: "Switching Protocols: El servidor acepta cambiar el protocolo de comunicación (como de HTTP a WebSocket).",

@@ -1,22 +1,23 @@
 import requests
 from colorama import Fore
 import socket
-from subprocess import check_output,run
 import ipaddress
 from pprint import pp
-import keyboard
 from random import randint
 import params
 import data
 from time import time,sleep
 from pandas import DataFrame
 from bs4 import BeautifulSoup
-from subprocess import run
+from ping3 import ping
 
-deten = False   
+
+"version de termux/android"
+
+  
 q = 0
 n = 0
-
+deten = False
 
 def preg_informe(ip,lista):
     preg = str(input(Fore.WHITE+'[1]guardar informe ').strip())
@@ -24,12 +25,11 @@ def preg_informe(ip,lista):
         titulo = str(input('titulo: '))
         crear_informe(params.param.ip,data.p_abiertos,titulo)
 
-
 def cuerpo_scan(lista,ip,timeout):
     #para el escaneo selectivo y normal: este es el formato para estos dos tipos de escaneos
-    global q
+    global q,deten
     # q solo se utiliza con normal
-    global deten
+    
 
     for x in lista:
         if not deten:
@@ -62,8 +62,7 @@ def cuerpo_scan(lista,ip,timeout):
                 q+=1
         else:
             break
-
-
+        
 def abrir_arch():
     try:
         with open(data.nombre_b,'r') as arch:
@@ -71,7 +70,6 @@ def abrir_arch():
         
     except FileNotFoundError:
         print(Fore.RED+'no se pudo encontrar el archivo')
-
 
 def borrar_arch():
     with open(data.nombre_b,'w') as arch:
@@ -171,9 +169,6 @@ puerto:{puerto}                 ''')
 #################################################
                     ''') 
 
-def puerta_de_enlace():
-    return str(check_output('ipconfig')).split(':')[-1][:-5].strip()
-
 def confiabilidad_ip(ip):
     url = 'https://barracudacentral.org/lookups/lookup-reputation'
     if requests.get(url).status_code == 200:
@@ -246,52 +241,39 @@ puertos por defecto abiertos:
     except Exception as e:
         print(f'ocurrio un error: {e}')
 
-def detener():
+def progreso():
     global q,n,deten
    
     tamaño_list_i = len(data.puertos)
     tiempo = time()
-    if params.param.buscar == None:
-        while not deten:
+    
+    while True:
+
+        val_prog = (q/tamaño_list_i) * 100
+        porcentaje =f'{str(val_prog)[:5]}%'
             
+        if time() - tiempo > 5:
+            print(Fore.CYAN+f'progreso: {porcentaje}')
+            tiempo = time()
+        if porcentaje == '100.0%':
+            print(Fore.GREEN+'script finalizado')
+            deten = True
+            break
 
-            if keyboard.is_pressed('esc'):
-                print(Fore.RED+'deteniendo')
-                
-                deten = True
 
-            val_prog = (q/tamaño_list_i) * 100
-            porcentaje =f'{str(val_prog)[:5]}%'
-                
-            if time() - tiempo > 5:
-                print(Fore.CYAN+f'progreso: {porcentaje}')
-                tiempo = time()
-            if porcentaje == '100.0%':
-                print(Fore.GREEN+'script finalizado')
-                deten= True
-    else:
-        while n < params.param.buscar and not deten:
-            if keyboard.is_pressed('esc'):
-                print(Fore.RED+'deteniendo')
-                deten = True
-                
 def latencia(ip):
     
-    try:
-        output= str(run(f'ping {ip} -w 1000',capture_output=True)).split('=')
-        min_ = int(output[-2].split('m')[0])
-        med_ = int(output[-3].split('m')[0])
-        max_= int(output[-4].split('m')[0])
-        
-        
-        #latencia de la conexion en seg
-        if ((min_ + med_ + max_) / 3) /1000 != 0:
-            return ((min_ + med_ + max_) / 3) /1000
-        else:
-            return 0.01
-    except ValueError:
-        return 1
+    
+    lat = ping(ip)
+    
 
+    if lat == None or lat == False:
+        return 1
+    else:
+        return lat
+    
+    #latencia de la conexion en seg
+    
 def scan_normal(ip,timeout):
     
     print(Fore.WHITE+f'escaneando puertos TCP de la ip: {ip}')

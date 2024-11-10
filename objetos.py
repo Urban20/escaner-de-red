@@ -5,6 +5,8 @@ import requests
 import func
 from bs4 import BeautifulSoup
 
+"version de termux/android"
+
 init()
 
 #objeto ip que solo se utiliza con el crawler
