@@ -54,7 +54,8 @@ def cuerpo_scan(lista,ip,timeout):
                 continue  
             except socket.gaierror as e:
                 print(Fore.RED+f'[X] error: {e}')
-                break
+                deten = True
+           
             except Exception as e:
                 print(Fore.RED+f'[X] ocurrio un error:{e}')
                 
