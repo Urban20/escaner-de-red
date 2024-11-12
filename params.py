@@ -20,3 +20,5 @@ args.add_argument('-m','--masivo',action=argparse.BooleanOptionalAction)
 args.add_argument('-cls','--borrar',action=argparse.BooleanOptionalAction)
 args.add_argument('-abrir','--abrir',action=argparse.BooleanOptionalAction)
 param = args.parse_args()
+
+    

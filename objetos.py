@@ -100,7 +100,7 @@ class Bot_Crawler():
             print(Fore.RED+'''
             
 ###########                      
- shodan
+shodan
 ###########  ''')
             try:
                 #fecha de cada escaneo de cada puerto
@@ -143,19 +143,19 @@ class Bot_Crawler():
                     print(f'''
 #################################################''')
                     print(Fore.GREEN+f'''
- fecha del puerto escaneado: {fecha_scaneo}''')   
+fecha del puerto escaneado: {fecha_scaneo}''')   
                     print(Fore.GREEN+f'''                    
                     
- PROTOCOLO:
+PROTOCOLO:
             ''')
                     print(Fore.WHITE+f'''                
 {protocol[:-5].strip()}
 {protocol[-4:]}
                     ''')
                     print(Fore.GREEN+'''
- SERVICIO EN ESCUCHA: ''')
+SERVICIO EN ESCUCHA: ''')
                     print(Fore.WHITE+f'''
- {infor}
+{infor}
 #################################################''')
             except AttributeError:
                 print(Fore.RED+'ningun puerto ni servicio encontrado')
@@ -166,7 +166,7 @@ class Bot_Crawler():
                 links = self.contenido.find_all('a',class_='link')
                 if links:
                     print(Fore.GREEN+'''URLS RELACIONADAS:
-                          ''')
+                        ''')
                     for link in links:
                         url = link.get('href')
                         print(Fore.WHITE+str(url))

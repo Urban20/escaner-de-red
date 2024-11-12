@@ -7,6 +7,7 @@ import objetos as objs
 
 "version de termux/android"
 
+
 init()
 
 def inicio_scan(msg):
@@ -16,7 +17,7 @@ def inicio_scan(msg):
 
     if params.param.timeout == None:
         lat_prom= func.latencia(params.param.ip)
-        tim = func.timeout(lat_prom)
+        tim = func.timeout(lat_prom,params.param.ip)
     else:
         tim = params.param.timeout
     print(f'timeout: {tim}')
@@ -126,7 +127,7 @@ if params.param.buscar != None and not params.param.normal:
             if busq != None:
                 print(busq)
                 func.n+=1
-           
+        
     except Exception as e:
         print(f'''ocurrio un error:
 {e}''')

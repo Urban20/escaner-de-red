@@ -14,7 +14,7 @@ from ping3 import ping
 
 "version de termux/android"
 
-  
+
 q = 0
 n = 0
 deten = False
@@ -54,9 +54,10 @@ def cuerpo_scan(lista,ip,timeout):
                 continue  
             except socket.gaierror as e:
                 print(Fore.RED+f'[X] error: {e}')
+                deten = True
                 break
-            except Exception as e:
-                print(Fore.RED+f'[X] ocurrio un error:{e}')
+            except Exception:
+                pass
             finally:
                 s.close()
                 q+=1
@@ -97,48 +98,48 @@ def ayuda():
 │                \ \__\ \__\                                                 │
 │                 \|__|\|__|     hecho por Urb@n                             │
 └────────────────────────────────────────────────────────────────────────────┘
-    Version 3.0   
+    Version 3.0/termux   
     
     '''
     h = Fore.WHITE+'''
 scip 3.0 es una herramienta de reconocimiento de redes desarrollada por Urb@n con busqueda en shodan y escaneo de redes, entre otras cosas
 
 parametros:
-  -h, --ayuda                             *muestra este mensaje
+-h, --ayuda                             *muestra este mensaje
 
-  -s, --shodan                            *busqueda automatica en shodan
+-s, --shodan                            *busqueda automatica en shodan
 
-  -n, --normal                            *escaneo de puertos con el metodo normal
+-n, --normal                            *escaneo de puertos con el metodo normal
 
-  -a, --agresivo                          *escaneo agresivo: escanea todos los puertos en simultaneo
+-a, --agresivo                          *escaneo agresivo: escanea todos los puertos en simultaneo
                                             Desventaja/s: puede fallar
                                             Ventaja/s: extremadamente rapido
 
-  -p SELECTIVO, --selectivo SELECTIVO     *para escanear puertos puntuales
+-p SELECTIVO, --selectivo SELECTIVO     *para escanear puertos puntuales
 
-  -ip IP, --ip IP                         *ip objetivo para el ataque
+-ip IP, --ip IP                         *ip objetivo para el ataque
 
-  -b BUSCAR, --buscar BUSCA               *Uso: este parametro se utiliza solo, su uso es -b [numero]
-                                           funcion: busqueda de ips, puede utilizarse junto con -g para guardar
+-b BUSCAR, --buscar BUSCA               *Uso: este parametro se utiliza solo, su uso es -b [numero]
+                                        funcion: busqueda de ips, puede utilizarse junto con -g para guardar
 
-  -g, --guardar                           *Uso: este parametro se combina con el parametro -b
-                                           funcion: guardar ips en lista
+-g, --guardar                           *Uso: este parametro se combina con el parametro -b
+                                        funcion: guardar ips en lista
 
-  -i, --info                              *Uso: este parametro se combina con -a y -n
-                                           funcion: muestra informacion de los encabezados en caso de encontrarse un puerto que apunta a un html
+-i, --info                              *Uso: este parametro se combina con -a y -n
+                                        funcion: muestra informacion de los encabezados en caso de encontrarse un puerto que apunta a un html
 
-  -l, --lectura                           *lee el archivo scannerip.txt y muestra su contenido
+-l, --lectura                           *lee el archivo scannerip.txt y muestra su contenido
 
-  -t, --timeout                           *setea un timeout especifico cuando se utiliza el parametro -n
+-t, --timeout                           *setea un timeout especifico cuando se utiliza el parametro -n
 
-  -m, --masivo                            *Uso: este parametro se combina con los parametros -a y -n
-                                           funcion: escanea TODOS los puertos existentes. 
-                                           Desventaja/s: escaneo mucho mas lento, puede ser de alta carga para el pc si se lo combina con -a
-                                           Ventaja/s: permite escanear todos los puertos
+-m, --masivo                            *Uso: este parametro se combina con los parametros -a y -n
+                                        funcion: escanea TODOS los puertos existentes. 
+                                        Desventaja/s: escaneo mucho mas lento, puede ser de alta carga para el pc si se lo combina con -a
+                                        Ventaja/s: permite escanear todos los puertos
 
-  -cls, --borrar                           *borra el contenido del archivo .txt donde se guardan las ips encontradas
- 
-  -abrir, --abrir                          *lee el archivo .txt donde se guardan las ips encontradas
+-cls, --borrar                           *borra el contenido del archivo .txt donde se guardan las ips encontradas
+
+-abrir, --abrir                          *lee el archivo .txt donde se guardan las ips encontradas
     '''
     print('''
 ##################################################################################################''')
@@ -151,7 +152,7 @@ def informacion(ip,puerto):
 
     dic = None
     
-   
+
     for x in ['https','http']:
 
         try: 
@@ -243,11 +244,11 @@ puertos por defecto abiertos:
 
 def progreso():
     global q,n,deten
-   
+
     tamaño_list_i = len(data.puertos)
     tiempo = time()
     
-    while True:
+    while not deten:
 
         val_prog = (q/tamaño_list_i) * 100
         porcentaje =f'{str(val_prog)[:5]}%'
@@ -266,7 +267,7 @@ def latencia(ip):
     
     lat = ping(ip)
     
-
+    
     if lat == None or lat == False:
         return 1
     else:
@@ -284,7 +285,7 @@ def scan_normal(ip,timeout):
 
                 
     except Exception as e:
-        print(Fore.RED+f'ocurrio un error:{e}')
+        pass
 
     finally:
     
@@ -292,11 +293,11 @@ def scan_normal(ip,timeout):
             if params.param.info:
                 for x in data.p_abiertos:
                     informacion(params.param.ip,x)
-           
+        
             sleep(1)
             
             preg_informe(ip=params.param.ip,lista=data.p_abiertos)
-                  
+                
         data.p_abiertos.clear()
 
 def scan_selectivo(ip,timeout,puertos):
@@ -318,7 +319,7 @@ def scan_agresivo(ip,puerto):
     
     try:  
         ipaddress.ip_address(ip)    
-         
+        
         s = socket.socket()       
         s.settimeout(timeout)
 
@@ -337,7 +338,7 @@ def scan_agresivo(ip,puerto):
 
                 
         except TimeoutError:
-                      
+                    
             pass
         except PermissionError:
             print(Fore.RED+f'sin permisos para escanear el puerto: {puerto}')
@@ -345,13 +346,13 @@ def scan_agresivo(ip,puerto):
             pass      
         except Exception as e:
             print(Fore.RED+f'ocurrio un error:{e}')
-		    
+            
         finally:
             s.close()
-               
+            
     except ValueError:
         pass
-         
+        
 def buscar():
     
     try:
@@ -383,16 +384,22 @@ def buscar():
     except:
         pass
 
-def timeout(latencia_prom):
-
-    print(f'latencia promedio:{latencia_prom} seg')
-    #para redes relativamente rapidas
-    if latencia_prom >= 0.015 and latencia_prom <= 0.3:
-        timeout = latencia_prom * 2
-    #para redes muy lentas
-    elif latencia_prom > 0.3:
-        timeout = latencia_prom * 1.5
-    else:
-        #timeout minimo para redes locales
-        timeout = 0.1
-    return timeout
+def timeout(latencia_prom,ip):
+    try:
+        #redes locales
+        if ipaddress.ip_address(ip).is_private:
+            timeout = 0.1
+    except ValueError:
+        #redes publicas
+        print(f'latencia promedio:{latencia_prom} seg')
+        #para redes relativamente rapidas
+        if latencia_prom >= 0.015 and latencia_prom <= 0.3:
+            timeout = latencia_prom * 2
+        #para redes muy lentas
+        elif latencia_prom > 0.3:
+            timeout = latencia_prom * 1.5
+        else:
+            
+            timeout = 0.1
+    finally:
+        return timeout
