@@ -263,16 +263,18 @@ def progreso():
 
 
 def latencia(ip):
-    
-    
-    lat = ping(ip)
-    
-    
-    if lat == None or lat == False:
+    ip_ = socket.gethostbyname(ip)
+    try:
+        lat = ping(ip_)
+        
+        if lat != None and lat != False:
+            return lat
+        else:
+            return 1
+    except:
         return 1
-    else:
-        return lat
     
+
     #latencia de la conexion en seg
     
 def scan_normal(ip,timeout):
@@ -384,12 +386,15 @@ def buscar():
     except:
         pass
 
+
+
 def timeout(latencia_prom,ip):
-    try:
-        #redes locales
-        if ipaddress.ip_address(ip).is_private:
-            timeout = 0.1
-    except ValueError:
+    ip_=socket.gethostbyname(ip)
+    #redes locales
+    if ipaddress.ip_address(ip_).is_private:
+        timeout = 0.1
+    else:
+          
         #redes publicas
         print(f'latencia promedio:{latencia_prom} seg')
         #para redes relativamente rapidas
@@ -399,7 +404,12 @@ def timeout(latencia_prom,ip):
         elif latencia_prom > 0.3:
             timeout = latencia_prom * 1.5
         else:
-            
+        
             timeout = 0.1
-    finally:
-        return timeout
+
+        
+
+    return timeout
+   
+
+  
