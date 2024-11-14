@@ -1,7 +1,6 @@
 import requests
 from colorama import Fore
 import socket
-from subprocess import check_output,run
 import ipaddress
 from pprint import pp
 import keyboard
@@ -11,6 +10,7 @@ import data
 from time import time,sleep
 from pandas import DataFrame
 from bs4 import BeautifulSoup
+from ping3 import ping
 
 
 deten = False   
@@ -173,8 +173,6 @@ puerto:{puerto}                 ''')
 #################################################
                     ''') 
 
-def puerta_de_enlace():
-    return str(check_output('ipconfig')).split(':')[-1][:-5].strip()
 
 def confiabilidad_ip(ip):
     url = 'https://barracudacentral.org/lookups/lookup-reputation'
@@ -278,22 +276,20 @@ def detener():
                 deten = True
                 
 def latencia(ip):
-    
     try:
-        output= str(run(f'ping {ip} -w 1000',capture_output=True)).split('=')
-        min_ = int(output[-2].split('m')[0])
-        med_ = int(output[-3].split('m')[0])
-        max_= int(output[-4].split('m')[0])
-        
-        
-        #latencia de la conexion en seg
-        if ((min_ + med_ + max_) / 3) /1000 != 0:
-            return ((min_ + med_ + max_) / 3) /1000
-        else:
-            return 0.01
-    except ValueError:
-        return 1
+        latencias = []
+        ping_ = 0
 
+        for i in range(3):
+            latencias.append(ping(ip))
+        
+        for x in latencias:
+            ping_+=x
+            
+        return ping_/3
+    except TypeError:
+        return 1
+    
 def scan_normal(ip,timeout):
     
     print(Fore.WHITE+f'escaneando puertos TCP de la ip: {ip}')
