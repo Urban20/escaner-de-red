@@ -10,7 +10,7 @@ from time import time,sleep
 from pandas import DataFrame
 from bs4 import BeautifulSoup
 from ping3 import ping
-
+from threading import Lock
 
 "version de termux/android"
 
@@ -140,6 +140,11 @@ parametros:
 -cls, --borrar                           *borra el contenido del archivo .txt donde se guardan las ips encontradas
 
 -abrir, --abrir                          *lee el archivo .txt donde se guardan las ips encontradas
+
+-d, --descubrir                          *se utiliza para descubrir ips privadas dentro de la red.
+                                          ejemplo de uso:
+                                          -ip 192.168.0.x (ip con "x" para buscar variaciones de la ip en ese sitio) -d (parametro para usar la funcion) 
+
     '''
     print('''
 ##################################################################################################''')
@@ -261,10 +266,10 @@ def progreso():
             deten = True
             break
 
-
 def latencia(ip):
-    ip_ = socket.gethostbyname(ip)
+    
     try:
+        ip_ = socket.gethostbyname(ip)
         lat = ping(ip_)
         
         if lat != None and lat != False:
@@ -386,15 +391,14 @@ def buscar():
     except:
         pass
 
-
-
 def timeout(latencia_prom,ip):
+    
     ip_=socket.gethostbyname(ip)
     #redes locales
     if ipaddress.ip_address(ip_).is_private:
         timeout = 0.1
     else:
-          
+        
         #redes publicas
         print(f'latencia promedio:{latencia_prom} seg')
         #para redes relativamente rapidas
@@ -411,5 +415,17 @@ def timeout(latencia_prom,ip):
 
     return timeout
    
-
+ipv4= []
+lock = Lock()   
+def descubrir_red(ip,i,timeout):
+    try:
+        direc = ip.replace('x',str(i))
+        ping_=ping(direc,timeout=timeout)
+        if ping_ != None and ping_ != False:
+            print(Fore.WHITE+direc)
+            with lock:
+                ipv4.append(direc)
+    
+    except:
+        pass
   

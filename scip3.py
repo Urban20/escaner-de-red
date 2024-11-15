@@ -4,6 +4,7 @@ from colorama import init,Fore
 import params
 import data
 import objetos as objs
+import ipaddress
 
 "version de termux/android"
 
@@ -11,17 +12,20 @@ import objetos as objs
 init()
 
 def inicio_scan(msg):
-    print(Fore.WHITE+f'''\n
+    try:
+        print(Fore.WHITE+f'''\n
 #################################################''')
-    print(Fore.WHITE+msg)
+        print(Fore.WHITE+msg)
 
-    if params.param.timeout == None:
-        lat_prom= func.latencia(params.param.ip)
-        tim = func.timeout(lat_prom,params.param.ip)
-    else:
-        tim = params.param.timeout
-    print(f'timeout: {tim}')
-    return tim
+        if params.param.timeout == None:
+            lat_prom= func.latencia(params.param.ip)
+            tim = func.timeout(lat_prom,params.param.ip)
+        else:
+            tim = params.param.timeout
+        print(f'timeout: {tim}')
+        return tim
+    except:
+        pass
 
 
 def crear_crawler(ip):
@@ -116,6 +120,21 @@ elif params.param.selectivo:
 
     else:
         print(Fore.RED+'especificar parametro [-ip]')
+elif params.param.ip != None and params.param.descubrir:
+    
+    if params.param.timeout != None:
+        timeout_ = params.param.timeout
+    else:
+        timeout_ = 4
+   
+    print(Fore.GREEN+'rastreando ips privadas: ')
+    for x in range(1,255):
+        if 'x' in params.param.ip:
+            threading.Thread(target=func.descubrir_red,args=(params.param.ip,x,timeout_)).start()
+        else:
+            print(Fore.RED+'la ip debe contener una x al final, ejemplo "192.168.0.x"')
+            break
+   
 
 if params.param.buscar != None and not params.param.normal:
     try:
