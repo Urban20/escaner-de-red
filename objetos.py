@@ -4,18 +4,21 @@ from colorama import Fore,init
 import requests
 import func
 from bs4 import BeautifulSoup
+from subprocess import run
 
 "version de termux/android"
 
 init()
 
 #objeto ip que solo se utiliza con el crawler
-class Ip():
+class Ip_publica():
+    #clase ip publica
     def __init__(self):
         self.ip = None
         self.validado = False
     
     def validacion(self,ip):
+        #chequea si la ip es publica
         try:
             ip_ =socket.gethostbyname(ip)
             if ipaddress.ip_address(ip_).is_global:
@@ -81,8 +84,7 @@ class Ip():
         except Exception as e:
             print(Fore.RED+f'hubo un error en reputacion: {e}')
 
-ip = Ip()
-
+ip = Ip_publica()
 
 class Bot_Crawler():
 
@@ -176,3 +178,22 @@ SERVICIO EN ESCUCHA: ''')
             except Exception as e:
                 print(Fore.RED+f'ocurrio un error en obtener_links: {e}')
 
+class Ipv4():
+    def __init__(self,ip):
+        self.ipv4 = ip
+        self.nombre = None
+
+    def ttl(self):
+        out= str(run(args=['ping','-c','1',self.ipv4],capture_output=True,text=True)).split()
+        for x in out:
+            if 'ttl' in x:
+                return int(x.split('=')[-1].strip())
+
+
+            
+    def obtener_nombre(self):
+        try:
+            self.nombre = socket.gethostbyaddr(self.ipv4)[0].split('.')[0].strip()
+        except:
+            self.nombre = '[desconocido]'
+        return(self.nombre)

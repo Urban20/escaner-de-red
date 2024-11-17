@@ -4,7 +4,7 @@ from colorama import init,Fore
 import params
 import data
 import objetos as objs
-import ipaddress
+
 
 "version de termux/android"
 
@@ -121,21 +121,36 @@ elif params.param.selectivo:
     else:
         print(Fore.RED+'especificar parametro [-ip]')
 elif params.param.ip != None and params.param.descubrir:
+    try:
     
-    if params.param.timeout != None:
-        timeout_ = params.param.timeout
-    else:
-        timeout_ = 4
-   
-    print(Fore.GREEN+'rastreando ips privadas: ')
-    for x in range(1,255):
-        if 'x' in params.param.ip:
-            threading.Thread(target=func.descubrir_red,args=(params.param.ip,x,timeout_)).start()
+        if params.param.timeout != None:
+            timeout_ = params.param.timeout
         else:
-            print(Fore.RED+'la ip debe contener una x al final, ejemplo "192.168.0.x"')
-            break
-   
-
+            timeout_ = 4
+    
+        print(Fore.GREEN+'rastreando ips privadas: ')
+        for x in range(1,255):
+            ejec= threading.Thread(target=func.descubrir_red,args=(params.param.ip,x,timeout_))
+            if 'x' in params.param.ip:
+                ejec.start()
+            else:
+                print(Fore.RED+'la ip debe contener una x al final, ejemplo "192.168.0.x"')
+                break
+        ejec.join()
+        
+        for ip in func.ipv4:
+        
+            ipv4 = objs.Ipv4(ip=ip)
+            codigo = ipv4.ttl()
+            nombre = ipv4.obtener_nombre()
+            
+            if codigo != None:
+                print(Fore.GREEN+f'\n{ip}:\n')
+                print(data.data_ttl[codigo])
+                print(Fore.CYAN+f'nombre del dispositivo: {nombre}')
+            
+    except:
+        pass
 if params.param.buscar != None and not params.param.normal:
     try:
         
