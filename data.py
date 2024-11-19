@@ -162,11 +162,11 @@ cerradura = Lock()
 data_ttl ={
     32:Fore.WHITE+'posible dispositivo antiguo',
     60:Fore.WHITE+'posible dispositivo de red de fabricante menor',
-    64:Fore.WHITE+'posible telefono ,PC mac, PC con Linux, router, etc (SO basado en Unix)',
-    100:Fore.WHITE+'posible router o sistema propietario',
-    128:Fore.WHITE+'posible PC con Windows',
-    200:Fore.WHITE+'posible sistema personalizado',
-    255:Fore.WHITE+'posible router o disp. de red'
+    64:Fore.WHITE+'Sistema operativo basado en Unix(Linux,iOS,android,etc)',
+    100:Fore.WHITE+'Sistema operativo de dispositivo de router o sistema propietario',
+    128:Fore.WHITE+'Sistema operativo Windows',
+    200:Fore.WHITE+'posible sistema operativo personalizado',
+    255:Fore.WHITE+'Sistema operativo de dispositivo de red'
 
 }
 #nombre del archivo que se crea al ingresar 1 en los escaneos

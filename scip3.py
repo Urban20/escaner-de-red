@@ -72,7 +72,7 @@ try:
         try:
             if params.param.ip != None:
                 print(Fore.WHITE+'''\n
-    #################################################''')
+#################################################''')
                 print(Fore.WHITE+'escaneo agresivo en curso...')
 
                 for x in puertos:
@@ -143,11 +143,14 @@ try:
                 ipv4 = objs.Ipv4(ip=ip)
                 codigo = ipv4.ttl()
                 nombre = ipv4.obtener_nombre()
-                
+                mac  = ipv4.obtener_mac()
+                compania = ipv4.obtener_compania()
                 if codigo != None:
                     print(Fore.GREEN+f'\n{ip}:\n')
                     print(data.data_ttl[codigo])
-                    print(Fore.CYAN+f'nombre del dispositivo: {nombre}')
+                    print(Fore.CYAN+f'nombre de disp. en la red: {nombre}')
+                    print(Fore.CYAN+f'direccion mac: {mac}')
+                    print(Fore.CYAN+f'compania: {compania}')
                 
         except:
             pass

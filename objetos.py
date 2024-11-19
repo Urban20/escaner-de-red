@@ -182,6 +182,8 @@ class Ipv4():
     def __init__(self,ip):
         self.ipv4 = ip
         self.nombre = None
+        self.mac = None
+        self.compania = None
 
     def ttl(self):
         out= str(run(args=['ping','-c','1',self.ipv4],capture_output=True,text=True)).split()
@@ -189,7 +191,13 @@ class Ipv4():
             if 'ttl' in x:
                 return int(x.split('=')[-1].strip())
 
+    def obtener_mac(self):
+        
+        for el in str(run(['ip','neigh','show',self.ipv4],text=True,capture_output=True)).split():
+            if ':' in el:
+                self.mac = el
 
+        return self.mac
             
     def obtener_nombre(self):
         try:
@@ -197,3 +205,13 @@ class Ipv4():
         except:
             self.nombre = '[desconocido]'
         return(self.nombre)
+    
+    def obtener_compania(self):
+        try:
+            api= requests.get(f'https://www.macvendorlookup.com/api/v2/{self.mac}').json()
+            for el in api:
+                self.compania = str(el['company'])
+                return self.compania
+
+        except:
+            return None
