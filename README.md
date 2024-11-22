@@ -55,4 +55,5 @@ scip -ip www.google.com -n ---> es un escaneo mas lento pero mas fiable, hace pi
 
   -d, --descubrir                          *se utiliza para descubrir ips privadas dentro de la red.
                                             ejemplo de uso:
-                                            -ip 192.168.0.x (ip con "x" para buscar variaciones de la ip en ese sitio) -d (parametro para usar la funcion) 
+                                            -ip 192.168.0.x (ip con "x" para buscar variaciones de la ip en ese sitio) -d (parametro para usar la funcion)
+                                            intenta hacer un fingerprinting a los dispositivos que encuentre 

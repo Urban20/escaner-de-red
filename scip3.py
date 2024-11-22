@@ -147,7 +147,7 @@ try:
                 compania = ipv4.obtener_compania()
                 if codigo != None:
                     print(Fore.GREEN+f'\n{ip}:\n')
-                    print(data.data_ttl[codigo])
+                    print(data.data_ttl.get(codigo))
                     print(Fore.CYAN+f'nombre de disp. en la red: {nombre}')
                     print(Fore.CYAN+f'direccion mac: {mac}')
                     print(Fore.CYAN+f'compania: {compania}')

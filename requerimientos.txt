@@ -1,0 +1,5 @@
+colorama
+requests
+numpy
+pandas
+ping3
