@@ -2,7 +2,6 @@ import requests
 from colorama import Fore
 import socket
 import ipaddress
-from pprint import pp
 from random import randint
 import params
 import data
@@ -167,11 +166,12 @@ def informacion(ip,puerto):
             
         finally:
             if dic != None:
-                    print(Fore.WHITE+f'''
+                print(Fore.WHITE+f'''
 #################################################
 puerto:{puerto}                 ''')
-                    pp(dic)
-                    print('''
+                for x in dic:
+                    print(f'{x}:{dic[x]}')
+                print('''
 #################################################
                     ''') 
 
