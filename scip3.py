@@ -4,7 +4,7 @@ from colorama import init,Fore
 import params
 import data
 import objetos as objs
-
+from concurrent.futures import ThreadPoolExecutor
 
 "version de termux/android"
 
@@ -74,10 +74,15 @@ try:
                 print(Fore.WHITE+'''\n
 #################################################''')
                 print(Fore.WHITE+'escaneo agresivo en curso...')
-
-                for x in puertos:
-                    hilo = threading.Thread(target=func.scan_agresivo,args=(params.param.ip,x))
-                    hilo.start()
+                if params.param.hilos != None:
+                    hilos = params.param.hilos
+                else:
+                    hilos = 900
+                print(f'numero de hilos: {hilos}')
+                with ThreadPoolExecutor(max_workers=hilos) as ejecutor:
+                    for x in puertos:
+                        
+                        ejecutor.submit(func.scan_agresivo,params.param.ip,x)
                 if data.p_abiertos:
 
                     print(Fore.WHITE+func.dataf())

@@ -20,6 +20,7 @@ args.add_argument('-m','--masivo',action=argparse.BooleanOptionalAction)
 args.add_argument('-cls','--borrar',action=argparse.BooleanOptionalAction)
 args.add_argument('-abrir','--abrir',action=argparse.BooleanOptionalAction)
 args.add_argument('-d','--descubrir',action=argparse.BooleanOptionalAction)
+args.add_argument('-hl','--hilos',type=int)
 param = args.parse_args()
 
     
