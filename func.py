@@ -16,6 +16,34 @@ deten = False
 q = 0
 n = 0
 
+def fingerprint_no_HTTP(ip,puerto):
+    try:
+        data = 'test'
+
+        s = socket.socket()
+
+        s.settimeout(3)
+        s.connect((ip,puerto))
+        s.send(data.encode())
+        return str(f'[{s.recv(1024).decode()}]')
+    
+    except UnicodeDecodeError:
+        return str(f'[{s.recv(1024)}]')
+    except:
+        return None
+
+def fingerprint_HTTP(ip,puerto):
+    for x in ['https','http']:
+        try: 
+            dic=dict(requests.get(f'{x}://{ip}:{str(puerto)}',timeout=5).headers)
+            break
+        except requests.exceptions.SSLError:
+            dic = None
+            continue
+        except:
+            dic = None
+    return dic
+
 
 def preg_informe(ip,lista):
     preg = str(input(Fore.WHITE+'[1]guardar informe ').strip())
@@ -79,30 +107,7 @@ def borrar_arch():
         arch.write('')
         
 def ayuda():
-    logo =Fore.RED+r'''
     
-┌────────────────────────────────────────────────────────────────────────────┐
-│ ________  ________  ________  ________   ________   _______   ________     │
-│|\   ____\|\   ____\|\   __  \|\   ___  \|\   ___  \|\  ___ \ |\   __  \    │
-│\ \  \___|\ \  \___|\ \  \|\  \ \  \\ \  \ \  \\ \  \ \   __/|\ \  \|\  \   │
-│ \ \_____  \ \  \    \ \   __  \ \  \\ \  \ \  \\ \  \ \  \_|/_\ \   _  _\  │
-│  \|____|\  \ \  \____\ \  \ \  \ \  \\ \  \ \  \\ \  \ \  \_|\ \ \  \\  \| │
-│    ____\_\  \ \_______\ \__\ \__\ \__\\ \__\ \__\\ \__\ \_______\ \__\\ _\ │
-│   |\_________\|_______|\|__|\|__|\|__| \|__|\|__| \|__|\|_______|\|__|\|__|│
-│   \|_________|                                                             │
-│                                                                            │
-│                                                                            │
-│              ___  ________                                                 │
-│             |\  \|\   __  \                                                │
-│ ____________\ \  \ \  \|\  \                                               │
-│|\____________\ \  \ \   ____\                                              │
-│\|____________|\ \  \ \  \___|                                              │
-│                \ \__\ \__\                                                 │
-│                 \|__|\|__|     hecho por Urb@n                             │
-└────────────────────────────────────────────────────────────────────────────┘
-    Version 3.0   
-    
-    '''
     h = Fore.WHITE+'''
 scip 3.0 es una herramienta de reconocimiento de redes desarrollada por Urb@n con busqueda en shodan y escaneo de redes, entre otras cosas
 
@@ -145,33 +150,35 @@ parametros:
     '''
     print('''
 ##################################################################################################''')
-    print(logo)
+    print(data.logo)
     print(h)
     print('''
 ##################################################################################################''')
+    print(data.autor)
 
 def informacion(ip,puerto):
+    #fing1 ---> fingerprint n 1: se encarga de conexiones de tranf. de hipertexto
+    # fing2 ---> fingerprint n 2: si fing1 falla se hace envia un msg al puerto para intentar obtener info
+    fing1= fingerprint_HTTP(ip,puerto)
+    fing2=fingerprint_no_HTTP(ip,puerto)
 
-    dic = None
+    print(Fore.WHITE+f'''
+#################################################
+puerto:{puerto}\n''')
+    if fing1 != None:
+        for x in fing1:
+            print(Fore.GREEN+f' {x}:{fing1[x]}')
     
-   
-    for x in ['https','http']:
+    elif fing2 != None:
+        print(Fore.GREEN+' '+fing2)
+    
+    if fing2 == None and fing1 == None:
+        print(Fore.RED+' sin informacion')
 
-        try: 
-            dic=dict(requests.get(f'{x}://{ip}:{str(puerto)}',timeout=5).headers)
-        except:
-            pass
-            
-        finally:
-            if dic != None:
-                print(Fore.WHITE+f'''
+    print(Fore.WHITE+'''
 #################################################
-puerto:{puerto}                 ''')
-                for x in dic:
-                    print(f'{x}:{dic[x]}')
-                print('''
-#################################################
-                    ''') 
+            ''') 
+
 
 
 def confiabilidad_ip(ip):
