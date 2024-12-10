@@ -7,7 +7,6 @@ from random import randint
 import params
 import data
 from time import time,sleep
-from pandas import DataFrame
 from bs4 import BeautifulSoup
 from ping3 import ping
 
@@ -82,6 +81,8 @@ def cuerpo_scan(lista,ip,timeout):
             except socket.gaierror as e:
                 print(Fore.RED+f'[X] error: {e}')
                 deten = True
+            except ConnectionRefusedError:
+                pass
            
             except Exception as e:
                 print(Fore.RED+f'[X] ocurrio un error:{e}')
@@ -261,27 +262,34 @@ def detener():
     if params.param.buscar == None:
         while not deten:
             
+            try:
+                if keyboard.is_pressed('esc'):
+                    print(Fore.RED+'deteniendo')
+                    
+                    deten = True
+            except AttributeError:
+                pass
 
-            if keyboard.is_pressed('esc'):
-                print(Fore.RED+'deteniendo')
+            finally:
                 
-                deten = True
-
-            val_prog = (q/tamaño_list_i) * 100
-            porcentaje =f'{str(val_prog)[:5]}%'
-                
-            if time() - tiempo > 5:
-                print(Fore.CYAN+f'progreso: {porcentaje}')
-                tiempo = time()
-            if porcentaje == '100.0%':
-                print(Fore.GREEN+'script finalizado')
-                deten= True
+                val_prog = (q/tamaño_list_i) * 100
+                porcentaje =f'{str(val_prog)[:5]}%'
+                    
+                if time() - tiempo > 5:
+                    print(Fore.CYAN+f'progreso: {porcentaje}')
+                    tiempo = time()
+                if porcentaje == '100.0%':
+                    print(Fore.GREEN+'script finalizado')
+                    deten= True
+            
     else:
-        while n < params.param.buscar and not deten:
-            if keyboard.is_pressed('esc'):
-                print(Fore.RED+'deteniendo')
-                deten = True
-                
+        try:
+            while n < params.param.buscar and not deten:
+                if keyboard.is_pressed('esc'):
+                    print(Fore.RED+'deteniendo')
+                    deten = True
+        except AttributeError:
+            pass
 def latencia(ip):
     try:
         latencias = []
@@ -305,7 +313,7 @@ def scan_normal(ip,timeout):
             
             cuerpo_scan(ip=ip,timeout=timeout,lista=data.puertos)
 
-                
+       
     except Exception as e:
         print(Fore.RED+f'ocurrio un error:{e}')
 
@@ -327,14 +335,6 @@ def scan_selectivo(ip,timeout,puertos):
     eleccion = list(puertos.split(','))
     cuerpo_scan(ip=ip,lista=eleccion,timeout=timeout)
 
-def dataf():
-    
-    dataf = DataFrame({
-    'puertos:':data.p_abiertos,
-    'uso mas común:':data.descrip
-    }).to_string()
-    
-    return dataf
 
 def scan_agresivo(ip,puerto):
     timeout = 3
@@ -347,17 +347,9 @@ def scan_agresivo(ip,puerto):
 
         try:
             s.connect((ip.strip(),puerto))
+            print(Fore.GREEN+f'[►] abierto: {puerto}\n servicio mas probable: {data.descripciones.get(puerto)}')
             with data.cerradura:
-                data.descrip.append(data.descripciones[puerto])
                 data.p_abiertos.append(puerto)
-                
-                
-            
-        except KeyError:
-            with data.cerradura:
-                data.descrip.append('[desconocido]')
-                data.p_abiertos.append(puerto)
-
                 
         except TimeoutError:
                       

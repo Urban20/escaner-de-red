@@ -4,6 +4,7 @@ from colorama import init,Fore
 import params
 import data
 import objetos as objs
+from concurrent.futures import ThreadPoolExecutor
 
 init()
 
@@ -42,6 +43,11 @@ if params.param.masivo:
 else:
     puertos = data.puertos
     
+if params.param.hilo == None:
+    hilo_=16
+else:
+    hilo_ = params.param.hilo
+
 
 try:
     #acciones de los parametros-----------------
@@ -67,20 +73,20 @@ try:
                 print(Fore.WHITE+'''\n
 #################################################''')
                 print(Fore.WHITE+'escaneo agresivo en curso...')
+                print(f'num de hilos: {hilo_}')
+                with ThreadPoolExecutor(max_workers=hilo_) as ejec:
 
-                for x in puertos:
-                    hilo = threading.Thread(target=func.scan_agresivo,args=(params.param.ip,x))
-                    hilo.start()
-                if data.p_abiertos:
+                    for x in puertos:
+                        
+                        ejec.submit(func.scan_agresivo,params.param.ip,x)
 
-                    print(Fore.WHITE+func.dataf())
-                    if params.param.info:
-                        for x in data.p_abiertos:
-                            func.informacion(params.param.ip,x)
+                
+                if params.param.info:
+                    for x in data.p_abiertos:
+                        func.informacion(params.param.ip,x)
 
-                    func.preg_informe(ip=params.param.ip,lista=data.p_abiertos)
-                else:
-                    print(Fore.RED+'no se encontro ningun puerto')
+                func.preg_informe(ip=params.param.ip,lista=data.p_abiertos)
+           
                 
 
             else:
@@ -95,11 +101,11 @@ try:
         if params.param.ip != None:
             
         
-            hilo3 = threading.Thread(target=func.detener)
+            
             
             scan= inicio_scan(msg='escaneo normal en curso...')
 
-            hilo3.start()   
+            threading.Thread(target=func.detener).start()
             func.scan_normal(params.param.ip,scan)   
             
         else:
@@ -122,8 +128,8 @@ try:
     if params.param.buscar != None and not params.param.normal:
         try:
             
-            hilo2 = threading.Thread(target=func.detener)
-            hilo2.start()
+            threading.Thread(target=func.detener).start()
+        
             while func.n < params.param.buscar:
                 if not func.deten:
                     busq = func.buscar()
