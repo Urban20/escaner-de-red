@@ -5,6 +5,7 @@ import params
 import data
 import objetos as objs
 from concurrent.futures import ThreadPoolExecutor
+from platform import system
 
 init()
 
@@ -124,7 +125,44 @@ try:
 
         else:
             print(Fore.RED+'especificar parametro [-ip]')
+    elif params.param.ip != None and params.param.descubrir:
+        try:
+        
+            if params.param.timeout != None:
+                timeout_ = params.param.timeout
+            else:
+                timeout_ = 4
+        
+            print(Fore.GREEN+'rastreando ips privadas: ')
+            for x in range(1,255):
+                try:
+                    ejec= threading.Thread(target=func.descubrir_red,args=(params.param.ip,x,timeout_))
+                    if 'x' in params.param.ip:
+                        ejec.start()
+                    else:
+                        print(Fore.RED+'la ip debe contener una x al final, ejemplo "192.168.0.x"')
+                        break
+                except:
+                    pass
+            ejec.join()
 
+            if system() == 'Linux':
+                for ip in func.ipv4:
+                
+                    ipv4 = objs.Ipv4(ip=ip)
+                    codigo = ipv4.ttl()
+                    nombre = ipv4.obtener_nombre()
+                    mac  = ipv4.obtener_mac()
+                    compania = ipv4.obtener_compania()
+                    if codigo != None:
+                        print(Fore.GREEN+f'\n{ip}:\n')
+                        print(data.data_ttl.get(codigo))
+                        print(Fore.CYAN+f'nombre de disp. en la red: {nombre}')
+                        print(Fore.CYAN+f'direccion mac: {mac}')
+                        print(Fore.CYAN+f'compania: {compania}')
+                    
+        except:
+            pass
     if params.param.buscar != None and not params.param.normal:
         try:
             

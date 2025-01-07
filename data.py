@@ -203,3 +203,14 @@ propiedad de:
 ╚██████╔╝██║  ██║██████╔╝╚█║████╔╝██║ ╚████║
  ╚═════╝ ╚═╝  ╚═╝╚═════╝  ╚╝╚═══╝ ╚═╝  ╚═══╝                                      
 '''
+
+data_ttl ={
+    32:Fore.WHITE+'posible dispositivo antiguo',
+    60:Fore.WHITE+'posible dispositivo de red de fabricante menor',
+    64:Fore.WHITE+'Sistema operativo basado en Unix(Linux,iOS,android,etc)',
+    100:Fore.WHITE+'Sistema operativo de dispositivo de router o sistema propietario',
+    128:Fore.WHITE+'Sistema operativo Windows',
+    200:Fore.WHITE+'posible sistema operativo personalizado',
+    255:Fore.WHITE+'Sistema operativo de dispositivo de red'
+
+}

@@ -2,14 +2,16 @@ import requests
 from colorama import Fore
 import socket
 import ipaddress
-import keyboard
 from random import randint
 import params
 import data
 from time import time,sleep
 from bs4 import BeautifulSoup
 from ping3 import ping
-
+from threading import Lock
+from platform import system
+if system() == 'Windows':
+    import keyboard
 
 deten = False   
 q = 0
@@ -43,13 +45,11 @@ def fingerprint_HTTP(ip,puerto):
             dic = None
     return dic
 
-
 def preg_informe(ip,lista):
     preg = str(input(Fore.WHITE+'[1]guardar informe ').strip())
     if preg == '1':
         titulo = str(input('titulo: '))
         crear_informe(params.param.ip,data.p_abiertos,titulo)
-
 
 def cuerpo_scan(lista,ip,timeout):
     #para el escaneo selectivo y normal: este es el formato para estos dos tipos de escaneos
@@ -93,7 +93,6 @@ def cuerpo_scan(lista,ip,timeout):
         else:
             break
 
-
 def abrir_arch():
     try:
         with open(data.nombre_b,'r') as arch:
@@ -101,7 +100,6 @@ def abrir_arch():
         
     except FileNotFoundError:
         print(Fore.RED+'no se pudo encontrar el archivo')
-
 
 def borrar_arch():
     with open(data.nombre_b,'w') as arch:
@@ -148,6 +146,11 @@ parametros:
   -cls, --borrar                           *borra el contenido del archivo .txt donde se guardan las ips encontradas
  
   -abrir, --abrir                          *lee el archivo .txt donde se guardan las ips encontradas
+    
+  -d, --descubrir                          *se utiliza para descubrir ips privadas dentro de la red.
+                                           ejemplo de uso:
+                                           -ip 192.168.0.x (ip con "x" para buscar variaciones de la ip en ese sitio) -d (parametro para usar la funcion) 
+    
     '''
     print('''
 ##################################################################################################''')
@@ -179,8 +182,6 @@ puerto:{puerto}\n''')
     print(Fore.WHITE+'''
 #################################################
             ''') 
-
-
 
 def confiabilidad_ip(ip):
     url = 'https://barracudacentral.org/lookups/lookup-reputation'
@@ -263,10 +264,11 @@ def detener():
         while not deten:
             
             try:
-                if keyboard.is_pressed('esc'):
-                    print(Fore.RED+'deteniendo')
-                    
-                    deten = True
+                if system() == 'Windows':
+                    if keyboard.is_pressed('esc'):
+                        print(Fore.RED+'deteniendo')
+                        
+                        deten = True
             except AttributeError:
                 pass
 
@@ -411,3 +413,17 @@ def timeout(latencia_prom):
         #timeout minimo para redes locales
         timeout = 0.1
     return timeout
+
+ipv4= []
+lock = Lock()  
+def descubrir_red(ip,i,timeout):
+    try:
+        direc = ip.replace('x',str(i))
+        ping_=ping(direc,timeout=timeout)
+        if ping_ != None and ping_ != False:
+            print(Fore.WHITE+direc)
+            with lock:
+                ipv4.append(direc)
+    
+    except:
+        pass
