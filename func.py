@@ -17,24 +17,10 @@ deten = False
 q = 0
 n = 0
 
-def fingerprint_no_HTTP(ip,puerto):
-    try:
-        data = 'test'
-
-        s = socket.socket()
-
-        s.settimeout(3)
-        s.connect((ip,puerto))
-        s.send(data.encode())
-        return str(f'[{s.recv(1024).decode()}]')
+def fingerprint(ip,puerto):
     
-    except UnicodeDecodeError:
-        return str(f'[{s.recv(1024)}]')
-    except:
-        return None
-
-def fingerprint_HTTP(ip,puerto):
     for x in ['https','http']:
+        
         try: 
             dic=dict(requests.get(f'{x}://{ip}:{str(puerto)}',timeout=5).headers)
             break
@@ -43,7 +29,27 @@ def fingerprint_HTTP(ip,puerto):
             continue
         except:
             dic = None
-    return dic
+    if dic == None:
+        try:
+            s = socket.socket()
+
+            s.settimeout(3)
+            s.connect((ip,puerto))
+            s.send(b'test\n\r')
+            return str(f'[{s.recv(1024).decode()}]')
+        
+        except UnicodeDecodeError:
+            return str(f'[{s.recv(1024)}]')
+        except:
+            return None
+    else:
+        try:
+            encabezado = ''
+            for x in dic:
+                encabezado += f'{x}: {dic[x]}\n\r'
+            return encabezado
+        except:
+            return None
 
 def preg_informe(ip,lista):
     preg = str(input(Fore.WHITE+'[1]guardar informe ').strip())
@@ -161,22 +167,17 @@ parametros:
     print(data.autor)
 
 def informacion(ip,puerto):
-    #fing1 ---> fingerprint n 1: se encarga de conexiones de tranf. de hipertexto
-    # fing2 ---> fingerprint n 2: si fing1 falla se hace envia un msg al puerto para intentar obtener info
-    fing1= fingerprint_HTTP(ip,puerto)
-    fing2=fingerprint_no_HTTP(ip,puerto)
+  
+    fing= fingerprint(ip,puerto)
+    
 
     print(Fore.WHITE+f'''
 #################################################
 puerto:{puerto}\n''')
-    if fing1 != None:
-        for x in fing1:
-            print(Fore.GREEN+f' {x}:{fing1[x]}')
+    if fing != None:
+        print(Fore.GREEN+fing)
     
-    elif fing2 != None:
-        print(Fore.GREEN+' '+fing2)
-    
-    if fing2 == None and fing1 == None:
+    else:
         print(Fore.RED+' sin informacion')
 
     print(Fore.WHITE+'''
@@ -292,6 +293,7 @@ def detener():
                     deten = True
         except AttributeError:
             pass
+
 def latencia(ip):
     try:
         latencias = []
@@ -341,15 +343,13 @@ def scan_selectivo(ip,timeout,puertos):
 def scan_agresivo(ip,puerto):
     timeout = 3
     
-    try:  
-        ipaddress.ip_address(ip)    
-         
+    try:   
         s = socket.socket()       
         s.settimeout(timeout)
 
         try:
             s.connect((ip.strip(),puerto))
-            print(Fore.GREEN+f'[►] abierto: {puerto}\n servicio mas probable: {data.descripciones.get(puerto)}')
+            print(Fore.GREEN+f'[►] abierto: {puerto}\n servicio mas probable: {data.descripciones.get(puerto)}\n\r')
             with data.cerradura:
                 data.p_abiertos.append(puerto)
                 

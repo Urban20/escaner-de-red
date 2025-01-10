@@ -6,10 +6,12 @@ import data
 import objetos as objs
 from concurrent.futures import ThreadPoolExecutor
 from platform import system
+from socket import gethostbyname
 
 init()
 
 def inicio_scan(msg):
+    #solo se llama cuando son escaneos normales o selectivos 
     print(Fore.WHITE+f'''\n
 #################################################''')
     print(Fore.WHITE+msg)
@@ -24,6 +26,7 @@ def inicio_scan(msg):
 
 
 def crear_crawler(ip):
+    #solo se llama al realizar OSINT con shodan
     print(Fore.WHITE+'''\n\n
 #################################################''')
     print(Fore.RED+'iniciando crawler')
@@ -74,22 +77,21 @@ try:
                 print(Fore.WHITE+'''\n
 #################################################''')
                 print(Fore.WHITE+'escaneo agresivo en curso...')
+
                 print(f'num de hilos: {hilo_}')
                 with ThreadPoolExecutor(max_workers=hilo_) as ejec:
-
+                    ip = gethostbyname(params.param.ip)
                     for x in puertos:
                         
-                        ejec.submit(func.scan_agresivo,params.param.ip,x)
+                        ejec.submit(func.scan_agresivo,ip,x)
 
                 
                 if params.param.info:
                     for x in data.p_abiertos:
-                        func.informacion(params.param.ip,x)
+                        func.informacion(ip,x)
 
-                func.preg_informe(ip=params.param.ip,lista=data.p_abiertos)
-           
-                
-
+                func.preg_informe(ip=ip,lista=data.p_abiertos)
+            
             else:
                 print(Fore.RED+'especificar parametro [-ip]')        
         except Exception as e:
@@ -97,12 +99,10 @@ try:
     {e}''')
         finally:
             data.p_abiertos.clear()
-            
+    
+    #escaneo normal
     elif params.param.normal and params.param.buscar == None:
         if params.param.ip != None:
-            
-        
-            
             
             scan= inicio_scan(msg='escaneo normal en curso...')
 
@@ -112,6 +112,7 @@ try:
         else:
             print(Fore.RED+'especificar parametro [-ip]') 
 
+    #escaneo selectivo
     elif params.param.selectivo:
         if params.param.ip != None:
             
@@ -125,6 +126,8 @@ try:
 
         else:
             print(Fore.RED+'especificar parametro [-ip]')
+    
+    #para descubrir ips privadas
     elif params.param.ip != None and params.param.descubrir:
         try:
         
