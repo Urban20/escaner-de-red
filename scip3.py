@@ -66,8 +66,7 @@ try:
             else:
                 print(Fore.RED+'especificar parametro [-ip]')
         except Exception as e:
-            print(f'''error al buscar en shodan:
-    {e}
+            print(f'''error al buscar en shodan:\n{e}
     ''')
 
 
@@ -85,7 +84,9 @@ try:
                         
                         ejec.submit(func.scan_agresivo,ip,x)
 
-                
+                if not data.p_abiertos:
+                    print(Fore.RED+'\nningun puerto encontrado\n')        
+                    
                 if params.param.info:
                     for x in data.p_abiertos:
                         func.informacion(ip,x)
@@ -93,12 +94,9 @@ try:
                 func.preg_informe(ip=ip,lista=data.p_abiertos)
             
             else:
-                print(Fore.RED+'especificar parametro [-ip]')        
+                print(Fore.RED+'\nespecificar parametro [-ip]\n')        
         except Exception as e:
-            print(Fore.RED+f'''error al escanear con metodo agresivo:
-    {e}''')
-        finally:
-            data.p_abiertos.clear()
+            print(Fore.RED+f'''error al escanear con metodo agresivo:\n{e}''')
     
     #escaneo normal
     elif params.param.normal and params.param.buscar == None:
@@ -125,7 +123,7 @@ try:
                     func.informacion(params.param.ip,x)
 
         else:
-            print(Fore.RED+'especificar parametro [-ip]')
+            print(Fore.RED+'\nespecificar parametro [-ip]\n')
     
     #para descubrir ips privadas
     elif params.param.ip != None and params.param.descubrir:
@@ -201,4 +199,4 @@ try:
             print(Fore.RED+'registro no encontrado')       
 except KeyboardInterrupt:
     func.deten = True
-    exit()
+    exit(1)

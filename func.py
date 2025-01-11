@@ -70,17 +70,16 @@ def cuerpo_scan(lista,ip,timeout):
             s.settimeout(timeout)
 
             try:
-                s.connect((ip,int(x)))
-                print(Fore.GREEN+f'[►] abierto: {x}')
+                if s.connect_ex((ip,int(x))) == 0:
 
-                print(f'uso mas comun: {data.descripciones[int(x)]}')
-                data.p_abiertos.append(int(x))
+                    print(Fore.GREEN+f'[►] abierto: {x}')
+
+                    print(f'uso mas comun: {data.descripciones[int(x)]}')
+                    data.p_abiertos.append(int(x))
             except KeyError:
                 print(f'uso mas comun: [desconocido]')
                 data.p_abiertos.append(int(x))
-            except TimeoutError:
-
-                continue
+            
             except PermissionError:
                 print(Fore.RED+f'[X] sin permisos para escanear el puerto: {x}')
                 continue  
@@ -154,9 +153,11 @@ parametros:
   -abrir, --abrir                          *lee el archivo .txt donde se guardan las ips encontradas
     
   -d, --descubrir                          *se utiliza para descubrir ips privadas dentro de la red.
-                                           ejemplo de uso:
+                                            ejemplo de uso:
                                            -ip 192.168.0.x (ip con "x" para buscar variaciones de la ip en ese sitio) -d (parametro para usar la funcion) 
     
+  -hl, --hilo                              *se utiliza con -a 
+                                            setea la cantidad de hilos en paralelo (16 hilos por defecto)
     '''
     print('''
 ##################################################################################################''')
@@ -281,8 +282,8 @@ def detener():
                 if time() - tiempo > 5:
                     print(Fore.CYAN+f'progreso: {porcentaje}')
                     tiempo = time()
-                if porcentaje == '100.0%':
-                    print(Fore.GREEN+'script finalizado')
+                if porcentaje == '100.0%' or deten:
+                    print(Fore.GREEN+'\nescaneo finalizado\n')
                     deten= True
             
     else:
@@ -300,7 +301,7 @@ def latencia(ip):
         ping_ = 0
 
         for i in range(3):
-            latencias.append(ping(ip))
+            latencias.append(ping(ip,timeout=1))
         
         for x in latencias:
             ping_+=x
@@ -338,7 +339,8 @@ def scan_selectivo(ip,timeout,puertos):
     
     eleccion = list(puertos.split(','))
     cuerpo_scan(ip=ip,lista=eleccion,timeout=timeout)
-
+    if not data.p_abiertos:
+        print(Fore.RED+'\nningun puerto encontrado\n')
 
 def scan_agresivo(ip,puerto):
     timeout = 3
@@ -348,14 +350,11 @@ def scan_agresivo(ip,puerto):
         s.settimeout(timeout)
 
         try:
-            s.connect((ip.strip(),puerto))
-            print(Fore.GREEN+f'[►] abierto: {puerto}\n servicio mas probable: {data.descripciones.get(puerto)}\n\r')
-            with data.cerradura:
-                data.p_abiertos.append(puerto)
-                
-        except TimeoutError:
-                      
-            pass
+            if s.connect_ex((ip.strip(),puerto)) == 0:
+                print(Fore.GREEN+f'[►] abierto: {puerto}\n servicio mas probable: {data.descripciones.get(puerto)}\n\r')
+                with data.cerradura:
+                    data.p_abiertos.append(puerto)
+            
         except PermissionError:
             print(Fore.RED+f'sin permisos para escanear el puerto: {puerto}')
         except OSError:
