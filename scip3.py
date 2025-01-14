@@ -164,7 +164,8 @@ try:
                     
         except:
             pass
-    if params.param.buscar != None and not params.param.normal:
+        #buscar ips publicas
+    elif params.param.buscar != None and not params.param.normal and params.param.ip == None:
         try:
             
             threading.Thread(target=func.detener).start()
@@ -178,9 +179,16 @@ try:
                         func.n+=1
                 else:
                     break
+            if not params.param.guardar:
+                if str(input('[1] guardar informacion >> ')).strip() == '1':
+                    for ip in data.lista_ips:
+                        func.agregar_arch(ip)
+                    print(Fore.GREEN+'\nla informacion fue guardada\n')
+                else:
+                    print(Fore.RED+'\nla informacion no fue guardada\n')
+
         except Exception as e:
-            print(f'''ocurrio un error:
-    {e}''')
+            print(f'''ocurrio un error:\n{e}''')
 
     if params.param.ayuda:
         func.ayuda()

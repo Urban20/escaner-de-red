@@ -52,7 +52,7 @@ def fingerprint(ip,puerto):
             return None
 
 def preg_informe(ip,lista):
-    preg = str(input(Fore.WHITE+'[1]guardar informe ').strip())
+    preg = str(input(Fore.WHITE+'[1] guardar informe >> ').strip())
     if preg == '1':
         titulo = str(input('titulo: '))
         crear_informe(params.param.ip,data.p_abiertos,titulo)
@@ -238,7 +238,7 @@ def rastreo(url):
         return Fore.RED+'* no responde: tiempo agotado'
     except Exception :
         return Fore.RED+'* no responde'
-    
+
 def crear_informe(ip,puerto,titulo):
     try:
         informe=f'''
@@ -288,10 +288,11 @@ def detener():
             
     else:
         try:
-            while n < params.param.buscar and not deten:
-                if keyboard.is_pressed('esc'):
-                    print(Fore.RED+'deteniendo')
-                    deten = True
+            
+                while n < params.param.buscar and not deten and system() == 'Windows':
+                    if keyboard.is_pressed('esc'):
+                        print(Fore.RED+'deteniendo')
+                        deten = True
         except AttributeError:
             pass
 
@@ -368,6 +369,11 @@ def scan_agresivo(ip,puerto):
     except ValueError:
         pass
          
+#la funcion para agregar arhivos, corresponde a buscar
+def agregar_arch(datos):
+    with open(data.nombre_b,'a') as ip_lista:
+        ip_lista.write(datos)
+
 def buscar():
     
     try:
@@ -389,10 +395,11 @@ def buscar():
     estado/prov:{geo['geoplugin_region']}
     puertos:{shodan['ports']}
 
-    '''
+    '''         
+                data.lista_ips.append(info_b)
+
             if params.param.guardar:      
-                with open(data.nombre_b,'a') as ip_lista:
-                    ip_lista.write(info_b)
+                agregar_arch(info_b)
 
             return info_b
         

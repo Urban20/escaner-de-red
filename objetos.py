@@ -44,21 +44,21 @@ class Ip():
     INFO:''')
                     print(Fore.WHITE+f'''
 #################################################                                                       
-    -ip:{shodan_api.json()['ip']}
-    -puertos: {shodan_api.json()['ports']}
-    -nombre de host:{shodan_api.json()['hostnames']}
-    -tipo de dispositivo:{shodan_api.json()['tags']}
+    -ip:{shodan_api.json().get('ip')}
+    -puertos: {shodan_api.json().get('ports')}
+    -nombre de host:{shodan_api.json().get('hostnames')}
+    -tipo de dispositivo:{shodan_api.json().get('tags')}
 #################################################''')
                 if geo.status_code == 200 and ip_api.status_code == 200:
                     print(Fore.GREEN+f'''
     GEOLOCALIZACION:''')
                     print(Fore.WHITE+f'''
 #################################################
-    -pais:{geo.json()['geoplugin_countryName']}
-    -ciudad:{geo.json()['geoplugin_city']}
-    -estado/prov:{geo.json()['geoplugin_regionName']}
-    -ISP:{ip_api.json()['isp']}
-    -org:{ip_api.json()['org']}
+    -pais:{geo.json().get('geoplugin_countryName')}
+    -ciudad:{geo.json().get('geoplugin_city')}
+    -estado/prov:{geo.json().get('geoplugin_regionName')}
+    -ISP:{ip_api.json().get('isp')}
+    -org:{ip_api.json().get('org')}
 #################################################''')
 
         except Exception as e:
