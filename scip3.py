@@ -71,18 +71,25 @@ try:
 
 
     if params.param.agresivo:
+        #t es el timeout para los escaneos agresivos
+        if params.param.timeout == None:
+            t = 0.5
+        else:
+            t = params.param.timeout
+
+
         try:
             if params.param.ip != None:
                 print(Fore.WHITE+'''\n
 #################################################''')
                 print(Fore.WHITE+'escaneo agresivo en curso...')
 
-                print(f'num de hilos: {hilo_}')
+                print(f'num de hilos: {hilo_}\n\rtimeout:{t}')
                 with ThreadPoolExecutor(max_workers=hilo_) as ejec:
                     ip = gethostbyname(params.param.ip)
                     for x in puertos:
                         
-                        ejec.submit(func.scan_agresivo,ip,x)
+                        ejec.submit(func.scan_agresivo,ip,x,t)
 
                 if not data.p_abiertos:
                     print(Fore.RED+'\nningun puerto encontrado\n')        
@@ -137,14 +144,16 @@ try:
             print(Fore.GREEN+'rastreando ips privadas: ')
             for x in range(1,255):
                 try:
+                
                     ejec= threading.Thread(target=func.descubrir_red,args=(params.param.ip,x,timeout_))
                     if 'x' in params.param.ip:
                         ejec.start()
                     else:
                         print(Fore.RED+'la ip debe contener una x al final, ejemplo "192.168.0.x"')
                         break
-                except:
-                    pass
+                    
+                except: pass
+                
             ejec.join()
 
             if system() == 'Linux':

@@ -343,8 +343,8 @@ def scan_selectivo(ip,timeout,puertos):
     if not data.p_abiertos:
         print(Fore.RED+'\nningun puerto encontrado\n')
 
-def scan_agresivo(ip,puerto):
-    timeout = 3
+def scan_agresivo(ip,puerto,timeout):
+    
     
     try:   
         s = socket.socket()       
@@ -390,10 +390,10 @@ def buscar():
             if list(shodan['ports']):
 
                 info_b= f'''
-    ip:{geo['geoplugin_request']}
-    pais:{geo['geoplugin_countryName']}
-    estado/prov:{geo['geoplugin_region']}
-    puertos:{shodan['ports']}
+    ip: {geo['geoplugin_request']}
+    pais: {geo['geoplugin_countryName']}
+    estado/prov: {geo['geoplugin_region']}
+    puertos: {shodan['ports']}
 
     '''         
                 data.lista_ips.append(info_b)
@@ -423,13 +423,14 @@ def timeout(latencia_prom):
 ipv4= []
 lock = Lock()  
 def descubrir_red(ip,i,timeout):
+    
     try:
         direc = ip.replace('x',str(i))
         ping_=ping(direc,timeout=timeout)
         if ping_ != None and ping_ != False:
-            print(Fore.WHITE+direc)
-            with lock:
-                ipv4.append(direc)
-    
+            if ipaddress.ip_address(direc).is_private:
+                print(Fore.WHITE+direc)
+                with lock:
+                    ipv4.append(direc)
     except:
         pass

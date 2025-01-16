@@ -52,3 +52,10 @@ scip -ip www.google.com -n ---> es un escaneo mas lento pero mas fiable, hace pi
   -cls, --borrar                           *borra el contenido del archivo .txt donde se guardan las ips encontradas
  
   -abrir, --abrir                          *lee el archivo .txt donde se guardan las ips encontradas
+
+  -d, --descubrir                          *se utiliza para descubrir ips privadas dentro de la red.
+                                            ejemplo de uso:
+                                           -ip 192.168.0.x (ip con "x" para buscar variaciones de la ip en ese sitio) -d (parametro para usar la funcion) 
+    
+  -hl, --hilo                              *se utiliza con -a 
+                                            setea la cantidad de hilos en paralelo (16 hilos por defecto)
