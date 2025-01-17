@@ -83,13 +83,13 @@ try:
                 print(Fore.WHITE+'''\n
 #################################################''')
                 print(Fore.WHITE+'escaneo agresivo en curso...')
-
+                json = func.cargar_json('data_puertos.json')
                 print(f'num de hilos: {hilo_}\n\rtimeout:{t}')
                 with ThreadPoolExecutor(max_workers=hilo_) as ejec:
                     ip = gethostbyname(params.param.ip)
                     for x in puertos:
                         
-                        ejec.submit(func.scan_agresivo,ip,x,t)
+                        ejec.submit(func.scan_agresivo,ip,x,t,json)
 
                 if not data.p_abiertos:
                     print(Fore.RED+'\nningun puerto encontrado\n')        
@@ -164,9 +164,10 @@ try:
                     nombre = ipv4.obtener_nombre()
                     mac  = ipv4.obtener_mac()
                     compania = ipv4.obtener_compania()
+                    json = func.cargar_json('ttl.json')
                     if codigo != None:
                         print(Fore.GREEN+f'\n{ip}:\n')
-                        print(data.data_ttl.get(codigo))
+                        print(json.get(str(codigo)))
                         print(Fore.CYAN+f'nombre de disp. en la red: {nombre}')
                         print(Fore.CYAN+f'direccion mac: {mac}')
                         print(Fore.CYAN+f'compania: {compania}')

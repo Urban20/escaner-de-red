@@ -2,50 +2,6 @@ from threading import Lock
 import params
 from colorama import Fore
 
-status = {
-    100: "Continue: El servidor ha recibido los encabezados de la solicitud y el cliente puede continuar enviando el cuerpo de la solicitud.",
-    101: "Switching Protocols: El servidor acepta cambiar el protocolo de comunicación (como de HTTP a WebSocket).",
-    102: "Processing: El servidor ha recibido la solicitud, pero aún no ha terminado de procesarla (utilizado en WebDAV).",
-    200: "OK: La solicitud ha sido procesada con éxito y el servidor devuelve los datos solicitados.",
-    201: "Created: La solicitud ha tenido éxito y ha resultado en la creación de un recurso.",
-    202: "Accepted: La solicitud ha sido aceptada, pero aún no se ha completado el procesamiento.",
-    203: "Non-Authoritative Information: La respuesta contiene información no verificada proveniente de un tercero.",
-    204: "No Content: La solicitud ha tenido éxito, pero el servidor no devuelve ningún contenido.",
-    205: "Reset Content: Similar a 204, pero indica al cliente que debe reiniciar la vista o formulario.",
-    206: "Partial Content: El servidor devuelve parte del contenido solicitado, generalmente en respuesta a solicitudes de rango.",
-    300: "Multiple Choices: Hay varias opciones para el recurso solicitado y el cliente debe elegir una.",
-    301: "Moved Permanently: El recurso solicitado ha sido movido de manera permanente a una nueva URL.",
-    302: "Found: El recurso ha sido movido temporalmente a otra URL (usualmente se utiliza para redirecciones).",
-    303: "See Other: El servidor sugiere al cliente una nueva URL para obtener el recurso usando el método GET.",
-    304: "Not Modified: El recurso no ha cambiado desde la última solicitud, por lo que el cliente puede usar una versión en caché.",
-    305: "Use Proxy: El recurso solicitado solo está disponible a través de un proxy.",
-    307: "Temporary Redirect: Similar a 302, pero el método de la solicitud no debe cambiar (se debe usar el método original).",
-    308: "Permanent Redirect: Similar a 301, pero garantiza que el método no cambie (usado en redirecciones permanentes).",
-    400: "Bad Request: La solicitud contiene sintaxis incorrecta o no puede ser procesada por el servidor.",
-    401: "Unauthorized: La solicitud requiere autenticación. El cliente debe autenticarse para obtener la respuesta.",
-    402: "Payment Required: Este código es reservado para usos futuros (originalmente pensado para sistemas de pago).",
-    403: "Forbidden: El cliente no tiene permiso para acceder al recurso solicitado, incluso si ha sido autenticado.",
-    404: "Not Found: El recurso solicitado no ha sido encontrado en el servidor.",
-    405: "Method Not Allowed: El método HTTP utilizado no está permitido para el recurso solicitado.",
-    406: "Not Acceptable: El recurso no está disponible en el formato solicitado.",
-    407: "Proxy Authentication Required: Similar a 401, pero requiere autenticación a través de un proxy.",
-    408: "Request Timeout: El servidor agotó el tiempo de espera antes de recibir la solicitud completa.",
-    409: "Conflict: Hay un conflicto con el estado actual del recurso (usualmente relacionado con solicitudes PUT).",
-    410: "Gone: El recurso solicitado ya no está disponible y no se espera que vuelva a estarlo.",
-    411: "Length Required: El servidor requiere que la solicitud incluya el encabezado Content-Length.",
-    412: "Precondition Failed: Una condición en los encabezados de la solicitud no ha sido cumplida por el servidor.",
-    413: "Payload Too Large: El servidor rechaza la solicitud porque el cuerpo es demasiado grande.",
-    414: "URI Too Long: La URI solicitada es demasiado larga para ser procesada por el servidor.",
-    415: "Unsupported Media Type: El servidor no puede manejar el tipo de medio solicitado en la solicitud.",
-    416: "Range Not Satisfiable: El cliente ha solicitado una porción de un archivo que el servidor no puede proporcionar (usualmente en solicitudes de rango).",
-    417: "Expectation Failed: El servidor no puede cumplir con los requisitos del encabezado Expect de la solicitud.",
-    500: "Internal Server Error: El servidor encontró una condición inesperada que le impidió completar la solicitud.",
-    501: "Not Implemented: El servidor no tiene soporte para la funcionalidad requerida para procesar la solicitud.",
-    502: "Bad Gateway: El servidor recibió una respuesta inválida de un servidor upstream mientras actuaba como gateway o proxy.",
-    503: "Service Unavailable: El servidor no está disponible, generalmente debido a sobrecarga o mantenimiento.",
-    504: "Gateway Timeout: El servidor acting como gateway no recibió una respuesta a tiempo de un servidor upstream.",
-    505: "HTTP Version Not Supported: El servidor no soporta la versión del protocolo HTTP utilizada en la solicitud."
-}
 
 #puertos utilizados comunmente
 
@@ -106,55 +62,7 @@ else:
     61532, 61900, 62078, 63331, 65129, 65389
     ]
 
-descripciones = {
-    20: 'Transferencia de datos.',
-    21: 'transferencia de archivos.',
-    22: 'SSH (Secure Shell)',
-    23: 'Telnet ',
-    25: 'SMTP – Envío de correos electrónicos.',
-    53: 'Resolución de nombres de dominio.',
-    67: 'Asignación de direcciones IP en redes.',
-    68: 'asignación de direcciones IP.',
-    69: 'Transferencia de archivos simple.',
-    80: 'Navegación web sin cifrar.',
-    110: 'Recepción de correos electrónicos.',
-    115: 'Transferencia simple de archivos (obsoleto).',
-    135: 'Comunicación entre procesos en redes Windows.',
-    137: 'Uso en redes locales de Windows para compartir archivos.',
-    138: 'NetBIOS Datagram Service.',
-    139: 'Uso en redes locales de Windows para compartir archivos.',
-    143: 'Recepción de correos con acceso remoto a buzón.',
-    161: 'Administración de red.',
-    162: 'Notificaciones de SNMP.',
-    443: 'HTTPS - Navegación web cifrada.',
-    445: 'compartición de archivos en Windows.',
-    465: 'Envío de correos electrónicos cifrados.',
-    514: 'Envío de logs de sistema a servidores remotos.',
-    587: 'Envío de correos electrónicos cifrados con seguridad adicional.',
-    631: 'Protocolo de impresión en red.',
-    993: 'IMAPS (IMAP over SSL) – IMAP cifrado.',
-    995: 'POP3S (POP3 over SSL) – POP3 cifrado.',
-    3306: 'MySQL – Conexión a bases de datos MySQL.',
-    3389: 'Acceso remoto a escritorio de Windows.',
-    5432: 'Conexión a bases de datos PostgreSQL.',
-    5900: 'Acceso remoto a escritorios.',
-    6379: 'Redis – Base de datos en memoria',
-    1194: 'OpenVPN – Servicio de VPN seguro.',
-    1433: 'Base de datos SQL de Microsoft.',
-    1434: 'Monitoreo de SQL Server.',
-    1521: 'Oracle DB – Conexión a bases de datos Oracle.',
-    1723: 'VPN menos segura.',
-    2049: 'compartición de archivos',
-    2082: 'Acceso al panel de control web cPanel.',
-    2083: 'cPanel con cifrado SSL.',
-    8080: 'HTTP alternativo',
-    8443: 'HTTPS alternativo',
-    8888: 'HTTP alternativo',
-    7547: 'Gestión remota de dispositivos',
-    119: 'Transferencia de artículos de noticias Usenet.',
-    515: 'Servicio de impresión en red.',
-    6667: 'Comunicación en tiempo real mediante chat.'
-}
+
 
 cerradura = Lock()
 
@@ -205,14 +113,3 @@ propiedad de:
 ╚██████╔╝██║  ██║██████╔╝╚█║████╔╝██║ ╚████║
  ╚═════╝ ╚═╝  ╚═╝╚═════╝  ╚╝╚═══╝ ╚═╝  ╚═══╝                                      
 '''
-
-data_ttl ={
-    32:Fore.WHITE+'posible dispositivo antiguo',
-    60:Fore.WHITE+'posible dispositivo de red de fabricante menor',
-    64:Fore.WHITE+'Sistema operativo basado en Unix(Linux,iOS,android,etc)',
-    100:Fore.WHITE+'Sistema operativo de dispositivo de router o sistema propietario',
-    128:Fore.WHITE+'Sistema operativo Windows',
-    200:Fore.WHITE+'posible sistema operativo personalizado',
-    255:Fore.WHITE+'Sistema operativo de dispositivo de red'
-
-}

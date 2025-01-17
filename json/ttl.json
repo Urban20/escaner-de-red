@@ -1,0 +1,10 @@
+{
+    "32":"posible dispositivo antiguo",
+    "60":"posible dispositivo de red de fabricante menor",
+    "64":"Sistema operativo basado en Unix(Linux,iOS,android,etc)",
+    "100":"Sistema operativo de dispositivo de router o sistema propietario",
+    "128":"Sistema operativo Windows",
+    "200":"posible sistema operativo personalizado",
+    "255":"Sistema operativo de dispositivo de red"
+
+}

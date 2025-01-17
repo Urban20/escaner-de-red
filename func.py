@@ -10,12 +10,17 @@ from bs4 import BeautifulSoup
 from ping3 import ping
 from threading import Lock
 from platform import system
+import json
 if system() == 'Windows':
     import keyboard
 
 deten = False   
 q = 0
 n = 0
+
+def cargar_json(archivo):
+    with open(f'json/{archivo}','r') as arch:
+        return json.load(arch)
 
 def fingerprint(ip,puerto):
     
@@ -35,7 +40,7 @@ def fingerprint(ip,puerto):
 
             s.settimeout(3)
             s.connect((ip,puerto))
-            s.send(b'test\n\r')
+            s.send(b'\x00')
             return str(f'[{s.recv(1024).decode()}]')
         
         except UnicodeDecodeError:
@@ -57,7 +62,7 @@ def preg_informe(ip,lista):
         titulo = str(input('titulo: '))
         crear_informe(params.param.ip,data.p_abiertos,titulo)
 
-def cuerpo_scan(lista,ip,timeout):
+def cuerpo_scan(lista,ip,timeout,json_):
     #para el escaneo selectivo y normal: este es el formato para estos dos tipos de escaneos
     global q
     # q solo se utiliza con normal
@@ -74,7 +79,7 @@ def cuerpo_scan(lista,ip,timeout):
 
                     print(Fore.GREEN+f'[►] abierto: {x}')
 
-                    print(f'uso mas comun: {data.descripciones[int(x)]}')
+                    print(f'uso mas comun: {json_[str(x)]}')
                     data.p_abiertos.append(int(x))
             except KeyError:
                 print(f'uso mas comun: [desconocido]')
@@ -224,7 +229,7 @@ confiabilidad de la ip:''')
         except  ValueError:
             return 'no valida' 
 
-def rastreo(url):
+def rastreo(url,json_):
     try:
         datos = {'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36'}
         solicitud= requests.get(url,timeout=5,headers=datos)
@@ -232,7 +237,7 @@ def rastreo(url):
             return Fore.GREEN+'* responde'
             
         else:
-            return Fore.YELLOW+f'* {data.status[solicitud.status_code]}'
+            return Fore.YELLOW+f'* {json_.get(str(solicitud.status_code))}'
     
     except requests.Timeout:
         return Fore.RED+'* no responde: tiempo agotado'
@@ -312,12 +317,12 @@ def latencia(ip):
         return 1
     
 def scan_normal(ip,timeout):
-    
+    dato = cargar_json('data_puertos.json')
     print(Fore.WHITE+f'escaneando puertos TCP de la ip: {ip}')
     try:
         for x in data.puertos :
             
-            cuerpo_scan(ip=ip,timeout=timeout,lista=data.puertos)
+            cuerpo_scan(ip=ip,timeout=timeout,lista=data.puertos,json_=dato)
 
        
     except Exception as e:
@@ -337,13 +342,13 @@ def scan_normal(ip,timeout):
         data.p_abiertos.clear()
 
 def scan_selectivo(ip,timeout,puertos):
-    
+    data_p = cargar_json('data_puertos.json')
     eleccion = list(puertos.split(','))
-    cuerpo_scan(ip=ip,lista=eleccion,timeout=timeout)
+    cuerpo_scan(ip=ip,lista=eleccion,timeout=timeout,json_=data_p)
     if not data.p_abiertos:
         print(Fore.RED+'\nningun puerto encontrado\n')
 
-def scan_agresivo(ip,puerto,timeout):
+def scan_agresivo(ip,puerto,timeout,json_):
     
     
     try:   
@@ -352,7 +357,7 @@ def scan_agresivo(ip,puerto,timeout):
 
         try:
             if s.connect_ex((ip.strip(),puerto)) == 0:
-                print(Fore.GREEN+f'[►] abierto: {puerto}\n servicio mas probable: {data.descripciones.get(puerto)}\n\r')
+                print(Fore.GREEN+f'[►] abierto: {puerto}\n servicio mas probable: {json_.get(str(puerto))}\n\r')
                 with data.cerradura:
                     data.p_abiertos.append(puerto)
             

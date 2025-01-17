@@ -160,6 +160,7 @@ class Bot_Crawler():
                 print(Fore.RED+'ningun puerto ni servicio encontrado')
 
     def obtener_links(self):
+        status = func.cargar_json('status.json')
         if ip.validado and self.status == 200:
             try:
                 links = self.contenido.find_all('a',class_='link')
@@ -169,7 +170,7 @@ class Bot_Crawler():
                     for link in links:
                         url = link.get('href')
                         print(Fore.WHITE+str(url))
-                        print(func.rastreo(url))
+                        print(func.rastreo(url,status))
             except AttributeError:
                 pass
             except Exception as e:
