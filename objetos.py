@@ -7,6 +7,8 @@ import func
 from bs4 import BeautifulSoup
 from subprocess import run
 
+'este modulo contiene las clases que se utilizan en el script'
+
 init()
 
 #objeto ip que solo se utiliza con el crawler

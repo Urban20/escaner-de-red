@@ -14,6 +14,10 @@ import json
 if system() == 'Windows':
     import keyboard
 
+
+'este modulo contiene las funciones que se utilizan en el script'
+
+
 deten = False   
 q = 0
 n = 0
@@ -41,12 +45,16 @@ def fingerprint(ip,puerto):
             s.settimeout(3)
             s.connect((ip,puerto))
             s.send(b'\x00')
-            return str(f'[{s.recv(1024).decode()}]')
-        
+            msg = s.recv(1024)
+            if msg != b'' and msg != None:
+                
+                return str(f'[{msg.decode()}]')
+                
         except UnicodeDecodeError:
             return str(f'[{s.recv(1024)}]')
         except:
             return None
+        finally: s.close()
     else:
         try:
             encabezado = ''
@@ -118,7 +126,7 @@ def borrar_arch():
 def ayuda():
     
     h = Fore.WHITE+'''
-scip 3.0 es una herramienta de reconocimiento de redes desarrollada por Urb@n con busqueda en shodan y escaneo de redes, entre otras cosas
+scip es una herramienta de reconocimiento de redes desarrollada por Urb@n con busqueda en shodan y escaneo de redes, entre otras cosas
 
 parametros:
   -h, --ayuda                             *muestra este mensaje

@@ -8,6 +8,8 @@ from concurrent.futures import ThreadPoolExecutor
 from platform import system
 from socket import gethostbyname
 
+'este modulo contiene el script principal el cual llama a todos los modulos necesarios para su funcionamiento'
+
 init()
 
 def inicio_scan(msg):
@@ -177,7 +179,7 @@ try:
         #buscar ips publicas
     elif params.param.buscar != None and not params.param.normal and params.param.ip == None:
         try:
-            
+            print(Fore.GREEN+'\n* rastreando ips publicas...\n')
             threading.Thread(target=func.detener).start()
         
             while func.n < params.param.buscar:
@@ -185,7 +187,7 @@ try:
                     busq = func.buscar()
                     data.elementos.clear()
                     if busq != None:
-                        print(busq)
+                        print(Fore.WHITE+busq)
                         func.n+=1
                 else:
                     break
