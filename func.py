@@ -29,16 +29,16 @@ def cargar_json(archivo):
 def fingerprint(ip,puerto):
     buffer = 1024
     msg = None
+    dic = None
     for x in ['https','http']:
         
         try: 
             dic=dict(requests.get(f'{x}://{ip}:{str(puerto)}',timeout=5).headers)
             break
-        except requests.exceptions.SSLError:
-            dic = None
-            continue
         except:
             dic = None
+            continue
+        
     if dic == None:
         try:
             s = socket.socket()
@@ -54,7 +54,6 @@ def fingerprint(ip,puerto):
                     else:
                         break
                 except:
-                    print(Fore.RED+f'* paquete enviado: {x}')
                     continue
             if msg != b'' and msg != None:
                 
