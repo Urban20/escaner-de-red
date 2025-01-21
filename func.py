@@ -3,8 +3,8 @@ from colorama import Fore
 import socket
 import ipaddress
 from random import randint
-import params
-import data
+import params 
+import data 
 from time import time,sleep
 from bs4 import BeautifulSoup
 from ping3 import ping
@@ -27,7 +27,8 @@ def cargar_json(archivo):
         return json.load(arch)
 
 def fingerprint(ip,puerto):
-    
+    buffer = 1024
+    msg = None
     for x in ['https','http']:
         
         try: 
@@ -44,16 +45,24 @@ def fingerprint(ip,puerto):
 
             s.settimeout(3)
             s.connect((ip,puerto))
-            s.send(b'\x00')
-            msg = s.recv(1024)
+            for x in [b'\x00',b'\x90' * 16,b'\x00\xff\x00\xff',b'USER anonymous\r\n',b'\x10\x20\x30\x40',b'test\r\n', b'\x01\x02\x03', b'GET / HTTP/1.1\r\n\r\n', b'\xff\xff\xff\xff']:
+                try:
+                    s.send(x)
+                    msg = s.recv(buffer)
+                    if msg == b'':
+                        raise Exception
+                    else:
+                        break
+                except:
+                    print(Fore.RED+f'* paquete enviado: {x}')
+                    continue
             if msg != b'' and msg != None:
                 
-                return str(f'[{msg.decode()}]')
+                return msg.decode()
                 
         except UnicodeDecodeError:
-            return str(f'[{s.recv(1024)}]')
-        except:
-            return None
+            return {s.recv(buffer)}
+        
         finally: s.close()
     else:
         try:
@@ -172,31 +181,27 @@ parametros:
   -hl, --hilo                              *se utiliza con -a 
                                             setea la cantidad de hilos en paralelo (16 hilos por defecto)
     '''
-    print('''
-##################################################################################################''')
+    print('\n##################################################################################################\n')
     print(data.logo)
     print(h)
-    print('''
-##################################################################################################''')
+    print('\n##################################################################################################\n')
     print(data.autor)
 
 def informacion(ip,puerto):
-  
+    print(Fore.CYAN+f'\n[*] se intenta obtener informacion en el puerto {puerto} ...\n')
     fing= fingerprint(ip,puerto)
     
 
     print(Fore.WHITE+f'''
 #################################################
-puerto:{puerto}\n''')
+puerto:{puerto}\n\r\n\r* respuesta del servidor:\n''')
     if fing != None:
         print(Fore.GREEN+fing)
     
     else:
-        print(Fore.RED+' sin informacion')
+        print(Fore.RED+'[X] sin informacion, no se recibio respuesta\n')
 
-    print(Fore.WHITE+'''
-#################################################
-            ''') 
+    print(Fore.WHITE+'#################################################') 
 
 def confiabilidad_ip(ip):
     url = 'https://barracudacentral.org/lookups/lookup-reputation'

@@ -3,7 +3,7 @@ import ipaddress
 from platform import system
 from colorama import Fore,init
 import requests
-import func
+import func as func
 from bs4 import BeautifulSoup
 from subprocess import run
 

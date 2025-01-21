@@ -1,8 +1,8 @@
 import threading
-import func
+import func 
 from colorama import init,Fore
-import params
-import data
+import params 
+import data 
 import objetos as objs
 from concurrent.futures import ThreadPoolExecutor
 from platform import system
