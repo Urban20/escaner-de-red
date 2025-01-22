@@ -44,29 +44,25 @@ def fingerprint(ip,puerto):
             s = socket.socket()
 
             s.settimeout(3)
-            s.connect((ip,puerto))
-            for x in [b'\x00',b'\x90' * 16,b'\x00\xff\x00\xff',b'USER anonymous\r\n',b'\x10\x20\x30\x40',b'test\r\n', b'\x01\x02\x03', b'GET / HTTP/1.1\r\n\r\n', b'\xff\xff\xff\xff']:
-                try:
-                    s.send(x)
-                    msg = s.recv(buffer)
-                    if msg == b'':
-                        raise Exception
-                    else:
-                        break
-                except:
-                    continue
-            if msg != b'' and msg != None:
-                
-                return msg.decode()   
-                
-        except UnicodeDecodeError:
+            if s.connect_ex((ip,puerto)) == 0:
+                for x in [b'\x00',b'\x90' * 16,b'\x00\xff\x00\xff',b'USER anonymous\r\n',b'\x10\x20\x30\x40',b'test\r\n', b'\x01\x02\x03', b'GET / HTTP/1.1\r\n\r\n', b'\xff\xff\xff\xff']:
+                    try:
+                        s.send(x)
+                        msg = s.recv(buffer)
+                        if msg == b'':
+                            raise Exception
+                        else: break
+                        
+                    except TimeoutError: msg = None
+                        
+                    except:continue
 
-            return {s.recv(buffer)}
-        
-        except:
+                if msg != None:  
+                    return msg.decode()
+                
+      
+        except UnicodeDecodeError: return str(msg)
 
-            return None
-        
         finally: s.close()
     else:
         try:
@@ -185,11 +181,10 @@ parametros:
   -hl, --hilo                              *se utiliza con -a 
                                             setea la cantidad de hilos en paralelo (16 hilos por defecto)
     '''
-    print('\n##################################################################################################\n')
-    print(data.logo)
-    print(h)
-    print('\n##################################################################################################\n')
-    print(data.autor)
+    
+    print(f'\n{data.logo}')
+    print(f'{h}\n')
+    print(f'\n{data.autor}')
 
 def informacion(ip,puerto):
     #esta funcion es la que gestiona la informacion que proviene de fingerprint y en base a los resultados da un mensaje en consola
@@ -201,7 +196,7 @@ def informacion(ip,puerto):
     print(Fore.WHITE+f'''
 #################################################
 puerto:{puerto}\n\r\n\r* respuesta del servidor:\n''')
-    if fing != None:
+    if fing != None and fing != '':
         print(Fore.GREEN+fing)
     
     else:

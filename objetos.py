@@ -140,8 +140,7 @@ class Bot_Crawler():
                         info.append(info_.get_text())
                             
                 for protocol,infor,fecha_scaneo in zip(proto,info,scan):
-                    print(f'''
-#################################################''')
+                    print(f'\n#################################################')
                     print(Fore.GREEN+f'\nfecha del puerto escaneado: {fecha_scaneo}')   
                     print(Fore.GREEN+f'\n\nPROTOCOLO:')
                     print(Fore.WHITE+f'''                

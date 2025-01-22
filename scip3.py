@@ -14,8 +14,7 @@ init()
 
 def inicio_scan(msg):
     #solo se llama cuando son escaneos normales o selectivos 
-    print(Fore.WHITE+f'''\n
-#################################################''')
+    print(Fore.WHITE+f'\n\n#################################################')
     print(Fore.WHITE+msg)
 
     if params.param.timeout == None:
@@ -82,8 +81,7 @@ try:
 
         try:
             if params.param.ip != None:
-                print(Fore.WHITE+'''\n
-#################################################''')
+                print(Fore.WHITE+'''\n\n#################################################''')
                 print(Fore.WHITE+'escaneo agresivo en curso...')
                 json = func.cargar_json('data_puertos.json')
                 print(f'num de hilos: {hilo_}\n\rtimeout:{t}')
