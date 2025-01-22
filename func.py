@@ -57,10 +57,15 @@ def fingerprint(ip,puerto):
                     continue
             if msg != b'' and msg != None:
                 
-                return msg.decode()
+                return msg.decode()   
                 
         except UnicodeDecodeError:
+
             return {s.recv(buffer)}
+        
+        except:
+
+            return None
         
         finally: s.close()
     else:
@@ -187,6 +192,8 @@ parametros:
     print(data.autor)
 
 def informacion(ip,puerto):
+    #esta funcion es la que gestiona la informacion que proviene de fingerprint y en base a los resultados da un mensaje en consola
+    
     print(Fore.CYAN+f'\n[*] se intenta obtener informacion en el puerto {puerto} ...\n')
     fing= fingerprint(ip,puerto)
     

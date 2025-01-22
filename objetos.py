@@ -3,9 +3,10 @@ import ipaddress
 from platform import system
 from colorama import Fore,init
 import requests
-import func as func
+import func 
 from bs4 import BeautifulSoup
 from subprocess import run
+from re import search
 
 'este modulo contiene las clases que se utilizan en el script'
 
@@ -89,7 +90,7 @@ class Bot_Crawler():
 
     def __init__(self,ip):
         self.ip = ip
-        self.html = BeautifulSoup(requests.get(f'https://www.shodan.io/host/{self.ip}').content,'html.parser')
+        self.html = BeautifulSoup(requests.get(f'https://www.shodan.io/host/{self.ip}').text,'html.parser')
         self.contenido = self.html.find('div',class_='container u-full-width card-padding')
         self.status = requests.get('https://www.shodan.io/').status_code
 
@@ -98,11 +99,7 @@ class Bot_Crawler():
     def scrapping_shodan(self):
 
         if  self.status == 200 and ip.validado and self.ip != None:
-            print(Fore.RED+'''
-            
-###########                      
- shodan
-###########  ''')
+            print(Fore.RED+'\n###########\nshodan\n###########\n')
             try:
                 #fecha de cada escaneo de cada puerto
                 scan = []
@@ -121,19 +118,21 @@ class Bot_Crawler():
 
 
                 for protocolo in protocolos: 
-                    if 'tcp' in str(protocolo.get_text()) or 'udp' in str(protocolo.get_text()):
-
+                    if search('tcp',str(protocolo.get_text()).lower()) != None or search('udp',str(protocolo.get_text()).lower()) != None:
+                        
                         proto.append(protocolo.get_text().strip())
-                    elif 'Last Seen' in str(protocolo.get_text()):
+                        
+                    elif search('last seen',str(protocolo.get_text()).lower()) != None:
+
                         print(Fore.WHITE+f'ultimo scaneo de shodan: {protocolo.get_text().strip()[10:]}')
 
                 for info_ in informacion:
                     
                     
-                    if 'html'in str(info_.get_text()) in str(info_.get_text()) and len(info_.get_text()) > 650:
+                    if search('html',str(info_.get_text()).lower()) != None and len(info_.get_text()) > 650:
                         info.append('posible pagina web')
                             
-                    elif 'ssh' in str(info_.get_text()).lower() and len(info_.get_text()) > 650:
+                    elif search('ssh',str(info_.get_text()).lower()) != None and len(info_.get_text()) > 650:
                         info.append('posible servicio ssh')
                         
                     else:
@@ -143,21 +142,14 @@ class Bot_Crawler():
                 for protocol,infor,fecha_scaneo in zip(proto,info,scan):
                     print(f'''
 #################################################''')
-                    print(Fore.GREEN+f'''
- fecha del puerto escaneado: {fecha_scaneo}''')   
-                    print(Fore.GREEN+f'''                    
-                    
- PROTOCOLO:
-            ''')
+                    print(Fore.GREEN+f'\nfecha del puerto escaneado: {fecha_scaneo}')   
+                    print(Fore.GREEN+f'\n\nPROTOCOLO:')
                     print(Fore.WHITE+f'''                
 {protocol[:-5].strip()}
 {protocol[-4:]}
                     ''')
-                    print(Fore.GREEN+'''
- SERVICIO EN ESCUCHA: ''')
-                    print(Fore.WHITE+f'''
- {infor}
-#################################################''')
+                    print(Fore.GREEN+'\nSERVICIO EN ESCUCHA: ')
+                    print(Fore.WHITE+f'\n{infor}\n#################################################')
             except AttributeError:
                 print(Fore.RED+'ningun puerto ni servicio encontrado')
 
