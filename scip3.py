@@ -28,9 +28,8 @@ def inicio_scan(msg):
 
 def crear_crawler(ip):
     #solo se llama al realizar OSINT con shodan
-    print(Fore.WHITE+'''\n\n
-#################################################''')
-    print(Fore.RED+'iniciando crawler')
+    
+    print(Fore.RED+'\niniciando crawler')
     
     #ip_num = ip numerica
     ip_num = objs.ip.validacion(ip)

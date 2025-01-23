@@ -42,26 +42,23 @@ class Ip():
                 shodan_api = requests.get(f'https://internetdb.shodan.io/{self.ip}')
                 geo = requests.get(f'http://www.geoplugin.net/json.gp?ip={self.ip}')
                 if shodan_api.status_code == 200:
-                    print(Fore.GREEN+f'''
-                        
-    INFO:''')
+                    print(Fore.GREEN+f'\nINFO:')
                     print(Fore.WHITE+f'''
 #################################################                                                       
-    -ip:{shodan_api.json().get('ip')}
-    -puertos: {shodan_api.json().get('ports')}
-    -nombre de host:{shodan_api.json().get('hostnames')}
-    -tipo de dispositivo:{shodan_api.json().get('tags')}
+-ip:{shodan_api.json().get('ip')}
+-puertos: {shodan_api.json().get('ports')}
+-nombre de host:{shodan_api.json().get('hostnames')}
+-tipo de dispositivo:{shodan_api.json().get('tags')}
 #################################################''')
                 if geo.status_code == 200 and ip_api.status_code == 200:
-                    print(Fore.GREEN+f'''
-    GEOLOCALIZACION:''')
+                    print(Fore.GREEN+f'\nGEOLOCALIZACION:')
                     print(Fore.WHITE+f'''
 #################################################
-    -pais:{geo.json().get('geoplugin_countryName')}
-    -ciudad:{geo.json().get('geoplugin_city')}
-    -estado/prov:{geo.json().get('geoplugin_regionName')}
-    -ISP:{ip_api.json().get('isp')}
-    -org:{ip_api.json().get('org')}
+-pais:{geo.json().get('geoplugin_countryName')}
+-ciudad:{geo.json().get('geoplugin_city')}
+-estado/prov:{geo.json().get('geoplugin_regionName')}
+-ISP:{ip_api.json().get('isp')}
+-org:{ip_api.json().get('org')}
 #################################################''')
 
         except Exception as e:
@@ -110,7 +107,7 @@ class Bot_Crawler():
                 
                 protocolos = self.contenido.findAll('span')
                 informacion = self.contenido.find_all('div',class_='card card-padding banner')
-                fecha_scan = self.html.find_all(class_='u-pull-right text-secondary')
+                fecha_scan = self.html.find_all('div',class_='text-secondary')
 
                 for x in fecha_scan:
                     scan.append(x.text.split('T')[0].split('|')[1].strip())
@@ -129,24 +126,21 @@ class Bot_Crawler():
                 for info_ in informacion:
                     
                     
-                    if search('html',str(info_.get_text()).lower()) != None and len(info_.get_text()) > 650:
-                        info.append('posible pagina web')
+                    if search('html',str(info_.text).lower()) != None and len(info_.get_text()) > 650:
+                        info.append('posible pagina web\n')
                             
-                    elif search('ssh',str(info_.get_text()).lower()) != None and len(info_.get_text()) > 650:
-                        info.append('posible servicio ssh')
+                    elif search('ssh',str(info_.text).lower()) != None and len(info_.get_text()) > 650:
+                        info.append('posible servicio ssh\n')
                         
                     else:
-                        
-                        info.append(info_.get_text())
-                            
+        
+                        info.append(info_.text)
+                                            
                 for protocol,infor,fecha_scaneo in zip(proto,info,scan):
                     print(f'\n#################################################')
                     print(Fore.GREEN+f'\nfecha del puerto escaneado: {fecha_scaneo}')   
                     print(Fore.GREEN+f'\n\nPROTOCOLO:')
-                    print(Fore.WHITE+f'''                
-{protocol[:-5].strip()}
-{protocol[-4:]}
-                    ''')
+                    print(Fore.WHITE+f'{protocol[:-5].strip()}{protocol[-4:]}')
                     print(Fore.GREEN+'\nSERVICIO EN ESCUCHA: ')
                     print(Fore.WHITE+f'\n{infor}\n#################################################')
             except AttributeError:
