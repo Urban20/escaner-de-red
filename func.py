@@ -394,14 +394,14 @@ def agregar_arch(datos):
         ip_lista.write(datos)
 
 def buscar():
-    
+    global deten
     try:
+        elementos=[]
         
-
         for x in range(4):
-            data.elementos.append(str(randint(0,255)))
+            elementos.append(str(randint(0,255)))
 
-        ip = ipaddress.ip_address('.'.join(data.elementos))
+        ip = ipaddress.ip_address('.'.join(elementos))
         if ip.is_global:
             geo= requests.get(f'http://www.geoplugin.net/json.gp?ip={ip}').json()
             shodan= requests.get(f'https://internetdb.shodan.io/{ip}').json()
@@ -421,9 +421,11 @@ def buscar():
                 agregar_arch(info_b)
 
             return info_b
-        
-    except:
-        pass
+    except KeyError: pass
+
+    except Exception as e:
+        print(Fore.RED+f'\nerror inesperado: {e}\n')
+        deten = True
 
 def timeout(latencia_prom):
 

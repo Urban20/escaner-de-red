@@ -76,8 +76,6 @@ p_abiertos= []
 
 descrip = []
 
-elementos=[]
-
 lista_ips = []
 
 logo =Fore.RED+r'''

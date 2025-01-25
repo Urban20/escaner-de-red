@@ -179,17 +179,16 @@ try:
             print(Fore.GREEN+'\n* rastreando ips publicas...\n')
             threading.Thread(target=func.detener).start()
         
-            while func.n < params.param.buscar:
-                if not func.deten:
-                    busq = func.buscar()
-                    data.elementos.clear()
-                    if busq != None:
-                        print(Fore.WHITE+busq)
-                        func.n+=1
-                else:
-                    break
+            while func.n < params.param.buscar and not func.deten:
+                
+                busq = func.buscar()
+                
+                if busq != None:
+                    print(Fore.WHITE+busq)
+                    func.n+=1
+                
             if not params.param.guardar:
-                if str(input('[1] guardar informacion >> ')).strip() == '1':
+                if str(input(Fore.WHITE+'[1] guardar informacion >> ')).strip() == '1':
                     for ip in data.lista_ips:
                         func.agregar_arch(ip)
                     print(Fore.GREEN+'\nla informacion fue guardada\n')

@@ -13,10 +13,9 @@ El objetivo de esto es crear una herramienta muy versatil en el campo de las red
 
 el script se usa en linea de comandos y su escritura es la siguiente:
 
-scip -ip [ip objetivo] (puede ser un dominio)  [parametro]
+python scip3.py -ip [ip objetivo] (puede ser un dominio)  [parametro]
 
---> si esta manera no funciona, se puede acceder al directorio e iniciar la herramienta con:
-python scip3.py [argumentos]
+
 
 ejemplos:
 

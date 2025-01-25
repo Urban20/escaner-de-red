@@ -3,3 +3,4 @@ __pycache__/
 android/
 keyboard/
 !requirements.txt
+scip.bat
