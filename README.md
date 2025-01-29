@@ -1,7 +1,7 @@
 [![logo.png](https://i.postimg.cc/59Y21Y3Y/logo.png)](https://postimg.cc/Thx6JPBf)
 
-## IMPORTANTE:
-antes de ejecutar la herramienta se debe abrir un terminal en el directorio y ejecutar el comando :
+> [!IMPORTANT]
+antes de ejecutar la herramienta se debe abrir un terminal en el directorio y ejecutar el comando:
 `pip install -r requirements.txt`
 esto instala todas las librerias necesarias para la ejecucion del codigo
 
@@ -70,3 +70,14 @@ scip -ip www.google.com -n ---> es un escaneo mas lento pero mas fiable, hace pi
     
   -hl, --hilo                              *se utiliza con -a 
                                             setea la cantidad de hilos en paralelo (16 hilos por defecto)
+
+> **algunas demostraciones graficas de como se usa el script:**
+
+[![demo1.png](https://i.postimg.cc/90ZVN27C/demo1.png)](https://postimg.cc/BPSdXdpV)
+
+[![demo2.png](https://i.postimg.cc/pXQRf2vB/demo2.png)](https://postimg.cc/w7BCHY7t)
+
+[![demo3.png](https://i.postimg.cc/FH9mG2sX/demo3.png)](https://postimg.cc/pp1gLcFs)
+
+> [!WARNING]
+no se recomienda poner un numero muy alto para el parametro b ya que esta funcion consume APIS con un numero finito de solicitudes por minuto, si se excede el limite se debe esperar una hora para que tu ip sea desbloqueada
