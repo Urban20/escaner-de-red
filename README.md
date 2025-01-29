@@ -9,6 +9,16 @@ esto instala todas las librerias necesarias para la ejecucion del codigo
 scip es una herramienta que integra OSINT para redes informaticas , escaneos de red de forma activa utilizando socket , busquedas de ips de forma aleatorias con sus respectivos puertos y geolocalizacion.
 El objetivo de esto es crear una herramienta muy versatil en el campo de las redes informaticas.
 
+## Caracteristicas:
+
+-recopilacion de informacion de una ip (geolocalizacion,isp,region,puertos abiertos registrados por shodan)
+
+-tiene varias estrategias para obtener puertos abiertos
+
+-descubre ips dentro de una red privada e intenta obtener informacion de los dispositivos conectados ( esta ultima funcion esta disponible en Linux y termux)
+
+-busqueda aleatoria de ips con gran posibilidad de encontrar puertos abiertos
+
 ## Uso:
 
 el script se usa en linea de comandos y su escritura es la siguiente:
