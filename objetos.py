@@ -125,16 +125,14 @@ class Bot_Crawler():
         status = func.cargar_json('status.json')
         if ip.validado and self.status == 200:
             try:
-                links = self.contenido.find_all('a',class_='link')
+                links = re.findall(r'https?://\d+.\d+.\d+.\d+:\d+',str(self.html))
                 if links:
                     print(Fore.GREEN+'''URLS RELACIONADAS:
                           ''')
                     for link in links:
-                        url = link.get('href')
-                        print(Fore.WHITE+str(url))
-                        print(func.rastreo(url,status))
-            except AttributeError:
-                pass
+                        print(Fore.WHITE+link)
+                        print(func.rastreo(link,status))
+            
             except Exception as e:
                 print(Fore.RED+f'ocurrio un error en obtener_links: {e}')
 
