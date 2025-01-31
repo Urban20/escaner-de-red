@@ -1,5 +1,5 @@
 import requests
-from colorama import Fore
+from colorama import Fore,init
 import socket
 import ipaddress
 from random import randint
@@ -17,7 +17,7 @@ if system() == 'Windows':
 
 'este modulo contiene las funciones que se utilizan en el script'
 
-
+init()
 deten = False   
 q = 0
 n = 0
@@ -197,7 +197,7 @@ def informacion(ip,puerto):
 #################################################
 puerto:{puerto}\n\r\n\r* respuesta del servidor:\n''')
     if fing != None and fing != '':
-        print(Fore.GREEN+fing)
+        print(f'\033[1;32m{fing}')
     
     else:
         print(Fore.RED+'[X] sin informacion, no se recibio respuesta\n')

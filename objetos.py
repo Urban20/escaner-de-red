@@ -6,7 +6,7 @@ import requests
 import func 
 from bs4 import BeautifulSoup
 from subprocess import run
-from re import search
+import re
 
 'este modulo contiene las clases que se utilizan en el script'
 
@@ -88,8 +88,8 @@ class Bot_Crawler():
     def __init__(self,ip):
         self.ip = ip
         self.html = BeautifulSoup(requests.get(f'https://www.shodan.io/host/{self.ip}').text,'html.parser')
-        self.contenido = self.html.find('div',class_='container u-full-width card-padding')
-        self.status = requests.get('https://www.shodan.io/').status_code
+        self.contenido = self.html.get_text().strip()
+        self.status = requests.get(f'https://www.shodan.io/host/{self.ip}').status_code
 
 
 
@@ -97,55 +97,30 @@ class Bot_Crawler():
 
         if  self.status == 200 and ip.validado and self.ip != None:
             print(Fore.RED+'\n###########\nshodan\n###########\n')
-            try:
-                #fecha de cada escaneo de cada puerto
-                scan = []
-                #protocolos que se maneja /udp o tcp
-                proto = []
-                #informacion del puerto en cuestion
-                info = []
-                
-                protocolos = self.contenido.findAll('span')
-                informacion = self.contenido.find_all('div',class_='card card-padding banner')
-                fecha_scan = self.html.find_all('div',class_='text-secondary')
+            
+            ult_escan = re.search(r'\d+-\d+-\d+',self.contenido.lower())
+            protocolos = re.findall(r'\d+ /\n(\D+)',self.contenido)
+            puertos = re.findall(r'(\d+) /\n\D+',self.contenido)
+            contenido = self.html.find_all('div',class_='card card-padding banner')
+            #fechas de cada escaneo por separado
+            fechas= re.findall(r' \| (\d+-\d+-\d+)t',self.contenido.lower())
 
-                for x in fecha_scan:
-                    scan.append(x.text.split('T')[0].split('|')[1].strip())
+            print(Fore.WHITE+f'ultima fecha registrada > {ult_escan.group()}')
 
+            for proto,puert,cont,fech in zip(protocolos,puertos,contenido,fechas):
+                print(f'\n#################################################')
+                print(Fore.GREEN+f'\nfecha del puerto escaneado: {fech}\r\n')   
+                print(Fore.WHITE+f'\033[1;32mprotocolo: \033[1;37m{proto.strip()} \033[1;32mpuerto: \033[1;37m{puert.strip()}\r\n')
+                if re.search('html',cont.get_text().strip().lower()):
+                    info = 'posible pagina web'
+                elif re.search('ssh',cont.get_text().strip().lower()):
+                    info = 'posible servicio ssh'
+                else:
+                    info = cont.get_text().strip()
 
-
-                for protocolo in protocolos: 
-                    if search('tcp',str(protocolo.get_text()).lower()) != None or search('udp',str(protocolo.get_text()).lower()) != None:
-                        
-                        proto.append(protocolo.get_text().strip())
-                        
-                    elif search('last seen',str(protocolo.get_text()).lower()) != None:
-
-                        print(Fore.WHITE+f'ultimo scaneo de shodan: {protocolo.get_text().strip()[10:]}')
-
-                for info_ in informacion:
-                    
-                    
-                    if search('html',str(info_.text).lower()) != None and len(info_.get_text()) > 650:
-                        info.append('posible pagina web\n')
-                            
-                    elif search('ssh',str(info_.text).lower()) != None and len(info_.get_text()) > 650:
-                        info.append('posible servicio ssh\n')
-                        
-                    else:
-        
-                        info.append(info_.text)
-                                            
-                for protocol,infor,fecha_scaneo in zip(proto,info,scan):
-                    print(f'\n#################################################')
-                    print(Fore.GREEN+f'\nfecha del puerto escaneado: {fecha_scaneo}')   
-                    print(Fore.GREEN+f'\n\nPROTOCOLO:')
-                    print(Fore.WHITE+f'{protocol[:-5].strip()}{protocol[-4:]}')
-                    print(Fore.GREEN+'\nSERVICIO EN ESCUCHA: ')
-                    print(Fore.WHITE+f'\n{infor}\n#################################################')
-            except AttributeError:
-                print(Fore.RED+'ningun puerto ni servicio encontrado')
-
+                print(Fore.WHITE+f'\rservicio en escucha\r\n\r\n{info}\r\n#################################################\r\n')
+            
+               
     def obtener_links(self):
         status = func.cargar_json('status.json')
         if ip.validado and self.status == 200:
