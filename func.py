@@ -26,6 +26,13 @@ def cargar_json(archivo):
     with open(f'json/{archivo}','r') as arch:
         return json.load(arch)
 
+if params.param.masivo:
+    
+    puertos = list(range(1,65535))
+
+else:
+    puertos = list(cargar_json('puertos.json')['lista'])
+
 def fingerprint(ip,puerto):
     buffer = 1024
     msg = None
@@ -279,7 +286,7 @@ puertos por defecto abiertos:
 def detener():
     global q,n,deten
    
-    tamaño_list_i = len(data.puertos)
+    tamaño_list_i = len(puertos)
     tiempo = time()
     if params.param.buscar == None:
         while not deten:
@@ -334,9 +341,8 @@ def scan_normal(ip,timeout):
     dato = cargar_json('data_puertos.json')
     print(Fore.WHITE+f'escaneando puertos TCP de la ip: {ip}')
     try:
-        for x in data.puertos :
             
-            cuerpo_scan(ip=ip,timeout=timeout,lista=data.puertos,json_=dato)
+        cuerpo_scan(ip=ip,timeout=timeout,lista=puertos,json_=dato)
 
        
     except Exception as e:

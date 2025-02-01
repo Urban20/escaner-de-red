@@ -16,7 +16,7 @@ def inicio_scan(msg):
     #solo se llama cuando son escaneos normales o selectivos 
     print(Fore.WHITE+f'\n\n#################################################')
     print(Fore.WHITE+msg)
-
+    print('\n"esc" para salir\n')
     if params.param.timeout == None:
         lat_prom= func.latencia(params.param.ip)
         tim = func.timeout(lat_prom)
@@ -42,13 +42,8 @@ def crear_crawler(ip):
     crawler.obtener_links()
 
 
-if params.param.masivo:
-    puertos = list(range(1,65535))
-else:
-    puertos = data.puertos
-    
 if params.param.hilo == None:
-    hilo_=16
+    hilo_= 100
 else:
     hilo_ = params.param.hilo
 
@@ -90,7 +85,7 @@ try:
                 print(f'num de hilos: {hilo_}\n\rtimeout:{t}')
                 with ThreadPoolExecutor(max_workers=hilo_) as ejec:
                     ip = gethostbyname(params.param.ip)
-                    for x in puertos:
+                    for x in func.puertos:
                         
                         ejec.submit(func.scan_agresivo,ip,x,t,json)
 
