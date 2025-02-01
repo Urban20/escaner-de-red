@@ -105,15 +105,15 @@ class Bot_Crawler():
             #fechas de cada escaneo por separado
             fechas= re.findall(r' \| (\d+-\d+-\d+)t',self.contenido.lower())
 
-            print(Fore.WHITE+f'ultima fecha registrada > {ult_escan.group()}')
+            print(Fore.WHITE+f'\033[1;32multima fecha registrada: \033[1;37m{ult_escan.group()}')
 
             for proto,puert,cont,fech in zip(protocolos,puertos,contenido,fechas):
                 print(f'\n#################################################')
-                print(Fore.GREEN+f'\nfecha del puerto escaneado: {fech}\r\n')   
-                print(Fore.WHITE+f'\033[1;32mprotocolo: \033[1;37m{proto.strip()} \033[1;32mpuerto: \033[1;37m{puert.strip()}\r\n')
-                if re.search('html',cont.get_text().strip().lower()):
+                print(Fore.GREEN+f'\nfecha del puerto escaneado: \033[1;37m{fech}\n')   
+                print(Fore.WHITE+f'\033[1;32mprotocolo: \033[1;37m{proto.strip()} \033[1;32mpuerto: \033[1;37m{puert.strip()}\n')
+                if re.search('html',cont.get_text().strip().lower()) and len(cont.get_text().strip()) > 650:
                     info = 'posible pagina web'
-                elif re.search('ssh',cont.get_text().strip().lower()):
+                elif re.search('ssh',cont.get_text().strip().lower()) and len(cont.get_text().strip()) > 650:
                     info = 'posible servicio ssh'
                 else:
                     info = cont.get_text().strip()

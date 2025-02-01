@@ -65,9 +65,13 @@ try:
                     crear_crawler(params.param.ip)
             else:
                 print(Fore.RED+'especificar parametro [-ip]')
+                
+        except AttributeError:
+            print(Fore.RED+'\nsin informacion al respecto\n')
+            
         except Exception as e:
-            print(f'''error al buscar en shodan:\n{e}
-    ''')
+            print(f'error al buscar en shodan:\n{e}\n')
+
 
 
     if params.param.agresivo:
