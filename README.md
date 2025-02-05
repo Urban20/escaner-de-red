@@ -38,48 +38,8 @@ scip -ip www.google.com -n ---> es un escaneo mas lento pero mas fiable, hace pi
 --> para el caso de python scip3.py es igual solo que se reemplaza la palabra scip
 
 ### parametros:
-  -h, --ayuda                             *muestra este mensaje
-
-  -s, --shodan                            *busqueda automatica en shodan
-
-  -n, --normal                            *escaneo de puertos con el metodo normal
-
-  -a, --agresivo                          *escaneo agresivo: escanea todos los puertos en simultaneo.
-                                            Desventaja/s: puede fallar
-                                            Ventaja/s: extremadamente rapido
-
-  -p SELECTIVO, --selectivo SELECTIVO     *para escanear puertos puntuales
-
-  -ip IP, --ip IP                         *ip objetivo para el ataque
-
-  -b BUSCAR, --buscar BUSCA               *Uso: este parametro se utiliza solo, su uso es -b [numero]
-                                           funcion: busqueda de ips, puede utilizarse junto con -g para guardar
-
-  -g, --guardar                           *Uso: este parametro se combina con el parametro -b
-                                           funcion: guardar ips en lista
-
-  -i, --info                              *Uso: este parametro se combina con -a y -n
-                                           funcion: muestra informacion de los encabezados en caso de encontrarse un puerto que apunta a un html
-
-  -l, --lectura                           *lee el archivo scannerip.txt y muestra su contenido
-
-  -t, --timeout                           *setea un timeout especifico cuando se utiliza el parametro -n
-
-  -m, --masivo                            *Uso: este parametro se combina con los parametros -a y -n
-                                           funcion: escanea TODOS los puertos existentes. 
-                                           Desventaja/s: escaneo mucho mas lento, puede ser de alta carga para el pc si se lo combina con -a
-                                           Ventaja/s: permite escanear todos los puertos
-
-  -cls, --borrar                           *borra el contenido del archivo .txt donde se guardan las ips encontradas
- 
-  -abrir, --abrir                          *lee el archivo .txt donde se guardan las ips encontradas
-
-  -d, --descubrir                          *se utiliza para descubrir ips privadas dentro de la red.
-                                            ejemplo de uso:
-                                           -ip 192.168.0.x (ip con "x" para buscar variaciones de la ip en ese sitio) -d (parametro para usar la funcion) 
-    
-  -hl, --hilo                              *se utiliza con -a 
-                                            setea la cantidad de hilos en paralelo (16 hilos por defecto)
+  
+[![parametros.png](https://i.postimg.cc/50xb85xw/parametros.png)](https://postimg.cc/sB0krhGX)
 
 > **algunas demostraciones graficas de como se usa el script:**
 

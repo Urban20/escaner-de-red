@@ -1,9 +1,8 @@
 from threading import Lock
-import params
-from colorama import Fore
+from colorama import Fore,init
 
 'este modulo contiene algunas de las variables que se utilizan en el script'
-
+init()
 cerradura = Lock()
 
 #nombre del archivo que se crea al ingresar 1 en los escaneos
@@ -25,8 +24,8 @@ logo =Fore.RED+r'''
      ██ ██      ██   ██ ██  ██ ██ ██  ██ ██ ██      ██   ██ ██ ██          
 ███████  ██████ ██   ██ ██   ████ ██   ████ ███████ ██   ██ ██ ██
           
-version 4.0                                                              
-    '''
+version 4.0                                                          
+'''
 autor =Fore.GREEN+'''
 propiedad de:
 

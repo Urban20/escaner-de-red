@@ -50,7 +50,7 @@ def fingerprint(ip,puerto):
         try:
             s = socket.socket()
 
-            s.settimeout(3)
+            s.settimeout(1.5)
             if s.connect_ex((ip,puerto)) == 0:
                 for x in [b'\x00',b'\x90' * 16,b'\x00\xff\x00\xff',b'USER anonymous\r\n',b'\x10\x20\x30\x40',b'test\r\n', b'\x01\x02\x03', b'GET / HTTP/1.1\r\n\r\n', b'\xff\xff\xff\xff']:
                     try:
@@ -190,6 +190,7 @@ parametros:
     '''
     
     print(f'\n{data.logo}')
+    print(Fore.CYAN+'github: https://github.com/Urban20')
     print(f'{h}\n')
     print(f'\n{data.autor}')
 
