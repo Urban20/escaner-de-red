@@ -39,7 +39,7 @@ scip -ip www.google.com -n ---> es un escaneo mas lento pero mas fiable, hace pi
 
 ### parametros:
   
-[![parametros.png](https://i.postimg.cc/50xb85xw/parametros.png)](https://postimg.cc/sB0krhGX)
+[![parametros.png](https://i.postimg.cc/PJ9gV1kV/parametros.png)](https://postimg.cc/1V07fnXD)
 
 > **algunas demostraciones graficas de como se usa el script:**
 
