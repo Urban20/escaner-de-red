@@ -98,7 +98,7 @@ class Bot_Crawler():
 
 
     def scrapping_shodan(self):
-        logging.info('se intenta hacer scrapping en shodan...')
+        logging.info('se intenta hacer scraping en shodan...')
 
         if  self.status == 200 and ip.validado and self.ip != None:
             print(Fore.RED+'\n###########\nshodan\n###########\n')

@@ -18,20 +18,30 @@ if system() == 'Windows':
 
 'este modulo contiene las funciones que se utilizan en el script'
 
-logging.basicConfig(filename='registro.log',level=logging.INFO)
-
-init()
-deten = False   
-q = 0
-n = 0
-
 def cargar_json(archivo):
     try:
         logging.info('cargando json...')
         with open(f'json/{archivo}','r') as arch:
             return json.load(arch)
-    except :
-        logging.critical('error en la carga de uno o varios archivos JSON')
+    except Exception as e:
+        logging.critical(f'error en la carga de uno o varios archivos JSON >> {e}')
+
+
+
+logging.basicConfig(filename='registro.log',
+                    level=logging.WARNING,
+                    datefmt='%a, %d %b %Y %H:%M:%S',
+                    format='%(asctime)s-%(msg)s')
+                    
+
+
+logging.warning('iniciando ejecucion de la herramienta...')
+init()
+deten = False   
+q = 0
+n = 0
+
+#opciones del parametro -m
 if params.param.masivo:
     
     puertos = list(range(1,65535))
@@ -89,6 +99,7 @@ def fingerprint(ip,puerto):
     logging.info('se finalizo el fingerprint')
 
 def preg_informe(ip,lista):
+    
     preg = str(input(Fore.WHITE+'[1] guardar informe >> ').strip())
     if preg == '1':
         titulo = str(input('titulo: '))
@@ -123,14 +134,14 @@ def cuerpo_scan(lista,ip,timeout,json_):
                 
                 continue  
             except socket.gaierror as e:
-                logging.error('error en funcion cuerpo_escan: socket.gaierror')
+                logging.error(f'error en funcion cuerpo_escan >> {e}')
                 deten = True
-            except ConnectionRefusedError:
-                logging.warning('error pequeño en cuerpo_scan')
+            except ConnectionRefusedError as e:
+                logging.warning(f'error pequeño en cuerpo_scan >> {e}')
                 pass
            
             except Exception as e:
-                logging.error('ocurrio un error desconocido en cuerpo_scan')
+                logging.error(f'ocurrio un error en cuerpo_scan >> {e}')
                 
             finally:
                 s.close()
@@ -147,6 +158,8 @@ def abrir_arch():
         
     except FileNotFoundError:
         logging.error('no se pudo encontrar el archivo')
+    except Exception as e:
+        logging.critical(f'hubo un error en la apertura de un archivo >> {e}')
 
 def borrar_arch():
     with open(data.nombre_b,'w') as arch:
@@ -264,7 +277,7 @@ def confiabilidad_ip(ip):
             return 'no valida' 
 
 def rastreo(url,json_):
-    logging.info('iniciando rastreo..')
+    logging.info('iniciando rastreo...')
     try:
         datos = {'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36'}
         solicitud= requests.get(url,timeout=5,headers=datos)
@@ -478,5 +491,5 @@ def descubrir_red(ip,i,timeout):
                 print(Fore.WHITE+direc)
                 with lock:
                     ipv4.append(direc)
-    except:
-        logging.error('error en descubrir_red')
+    except Exception as e:
+        logging.error(f'error en descubrir_red >> {e}')

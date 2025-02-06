@@ -7,7 +7,8 @@ import objetos as objs
 from concurrent.futures import ThreadPoolExecutor
 from platform import system
 from socket import gethostbyname
-from logging import info,critical
+from logging import info,critical,warning
+
 
 'este modulo contiene el script principal el cual llama a todos los modulos necesarios para su funcionamiento'
 
@@ -211,6 +212,6 @@ try:
 except KeyboardInterrupt:
     func.deten = True
     exit(1)
-except: critical('error critico desconocido en el flujo principal')
+except Exception as e: critical(f'error critico desconocido en el flujo principal >> {e}')
 finally:
-    info('la herramienta finalizo con exito')
+    warning('la herramienta finalizo con exito')
