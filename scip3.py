@@ -212,6 +212,6 @@ try:
 except KeyboardInterrupt:
     func.deten = True
     exit(1)
-except Exception as e: critical(f'error critico desconocido en el flujo principal >> {e}')
+except Exception as e: critical(f'error critico desconocido en el flujo principal')
 finally:
-    warning('la herramienta finalizo con exito')
+    warning('la herramienta fue finalizada')

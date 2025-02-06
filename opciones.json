@@ -1,0 +1,7 @@
+{
+    "comentario" : "este json establece el nivel de prioridad del log: basico / detallado",
+
+    "nivel": "detallado"
+
+
+}

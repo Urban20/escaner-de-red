@@ -18,21 +18,31 @@ if system() == 'Windows':
 
 'este modulo contiene las funciones que se utilizan en el script'
 
-def cargar_json(archivo):
-    try:
-        logging.info('cargando json...')
-        with open(f'json/{archivo}','r') as arch:
-            return json.load(arch)
-    except Exception as e:
-        logging.critical(f'error en la carga de uno o varios archivos JSON >> {e}')
 
 
+#cargar las opciones del log
+with open('opciones.json','r') as opciones:
+    cont_op = json.load(opciones)
 
-logging.basicConfig(filename='registro.log',
-                    level=logging.WARNING,
-                    datefmt='%a, %d %b %Y %H:%M:%S',
-                    format='%(asctime)s-%(msg)s')
-                    
+op = cont_op['nivel']
+
+match cont_op['nivel']:
+    case 'basico':
+        nivel = logging.WARNING
+    case 'detallado':
+        nivel = logging.INFO
+    case _:
+        nivel = 'error'
+
+print(f'\nlog >> {op}\n')
+try:
+    logging.basicConfig(filename='registro.log',
+                        level=nivel,
+                        datefmt='%a, %d %b %Y %H:%M:%S',
+                        format='%(asctime)s-%(msg)s')
+except ValueError:
+    print(Fore.RED+'\ncofiguracion incorrecta, revisar opciones.json\n')
+    exit(1)                       
 
 
 logging.warning('iniciando ejecucion de la herramienta...')
@@ -40,6 +50,14 @@ init()
 deten = False   
 q = 0
 n = 0
+
+def cargar_json(archivo):
+    try:
+        logging.info('cargando json...')
+        with open(f'json/{archivo}','r') as arch:
+            return json.load(arch)
+    except Exception as e:
+        logging.critical(f'error en la carga de uno o varios archivos JSON')
 
 #opciones del parametro -m
 if params.param.masivo:
@@ -134,14 +152,14 @@ def cuerpo_scan(lista,ip,timeout,json_):
                 
                 continue  
             except socket.gaierror as e:
-                logging.error(f'error en funcion cuerpo_escan >> {e}')
+                logging.error(f'error en funcion cuerpo_escan')
                 deten = True
             except ConnectionRefusedError as e:
-                logging.warning(f'error pequeño en cuerpo_scan >> {e}')
+                logging.warning(f'error pequeño en cuerpo_scan')
                 pass
            
             except Exception as e:
-                logging.error(f'ocurrio un error en cuerpo_scan >> {e}')
+                logging.error(f'ocurrio un error en cuerpo_scan')
                 
             finally:
                 s.close()
@@ -159,7 +177,7 @@ def abrir_arch():
     except FileNotFoundError:
         logging.error('no se pudo encontrar el archivo')
     except Exception as e:
-        logging.critical(f'hubo un error en la apertura de un archivo >> {e}')
+        logging.critical(f'hubo un error en la apertura de un archivo')
 
 def borrar_arch():
     with open(data.nombre_b,'w') as arch:
@@ -492,4 +510,4 @@ def descubrir_red(ip,i,timeout):
                 with lock:
                     ipv4.append(direc)
     except Exception as e:
-        logging.error(f'error en descubrir_red >> {e}')
+        logging.error(f'error en descubrir_red')
