@@ -11,11 +11,14 @@ from ping3 import ping
 from threading import Lock
 from platform import system
 import json
+import logging
 if system() == 'Windows':
     import keyboard
 
 
 'este modulo contiene las funciones que se utilizan en el script'
+
+logging.basicConfig(filename='registro.log',level=logging.INFO)
 
 init()
 deten = False   
@@ -23,9 +26,12 @@ q = 0
 n = 0
 
 def cargar_json(archivo):
-    with open(f'json/{archivo}','r') as arch:
-        return json.load(arch)
-
+    try:
+        logging.info('cargando json...')
+        with open(f'json/{archivo}','r') as arch:
+            return json.load(arch)
+    except :
+        logging.critical('error en la carga de uno o varios archivos JSON')
 if params.param.masivo:
     
     puertos = list(range(1,65535))
@@ -34,6 +40,7 @@ else:
     puertos = list(cargar_json('puertos.json')['lista'])
 
 def fingerprint(ip,puerto):
+    logging.info('iniciando fingerprint...')
     buffer = 1024
     msg = None
     dic = None
@@ -79,14 +86,17 @@ def fingerprint(ip,puerto):
             return encabezado
         except:
             return None
+    logging.info('se finalizo el fingerprint')
 
 def preg_informe(ip,lista):
     preg = str(input(Fore.WHITE+'[1] guardar informe >> ').strip())
     if preg == '1':
         titulo = str(input('titulo: '))
+        logging.info('guardando informe...')
         crear_informe(params.param.ip,data.p_abiertos,titulo)
 
 def cuerpo_scan(lista,ip,timeout,json_):
+    
     #para el escaneo selectivo y normal: este es el formato para estos dos tipos de escaneos
     global q
     # q solo se utiliza con normal
@@ -110,30 +120,33 @@ def cuerpo_scan(lista,ip,timeout,json_):
                 data.p_abiertos.append(int(x))
             
             except PermissionError:
-                print(Fore.RED+f'[X] sin permisos para escanear el puerto: {x}')
+                
                 continue  
             except socket.gaierror as e:
-                print(Fore.RED+f'[X] error: {e}')
+                logging.error('error en funcion cuerpo_escan: socket.gaierror')
                 deten = True
             except ConnectionRefusedError:
+                logging.warning('error pequeño en cuerpo_scan')
                 pass
            
             except Exception as e:
-                print(Fore.RED+f'[X] ocurrio un error:{e}')
+                logging.error('ocurrio un error desconocido en cuerpo_scan')
                 
             finally:
                 s.close()
                 q+=1
+
         else:
             break
 
 def abrir_arch():
+    logging.info('iniciando lectura de archivo...')
     try:
         with open(data.nombre_b,'r') as arch:
             print(arch.read())
         
     except FileNotFoundError:
-        print(Fore.RED+'no se pudo encontrar el archivo')
+        logging.error('no se pudo encontrar el archivo')
 
 def borrar_arch():
     with open(data.nombre_b,'w') as arch:
@@ -215,8 +228,7 @@ puerto:{puerto}\n\r\n\r* respuesta del servidor:\n''')
 def confiabilidad_ip(ip):
     url = 'https://barracudacentral.org/lookups/lookup-reputation'
     if requests.get(url).status_code == 200:
-        print(Fore.WHITE+'''
-confiabilidad de la ip:''')
+        print(Fore.WHITE+'\nconfiabilidad de la ip:')
         try:
             dir_ = ipaddress.ip_address(ip) 
 
@@ -252,6 +264,7 @@ confiabilidad de la ip:''')
             return 'no valida' 
 
 def rastreo(url,json_):
+    logging.info('iniciando rastreo..')
     try:
         datos = {'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36'}
         solicitud= requests.get(url,timeout=5,headers=datos)
@@ -267,6 +280,7 @@ def rastreo(url,json_):
         return Fore.RED+'* no responde'
 
 def crear_informe(ip,puerto,titulo):
+    logging.info('creando informe...')
     try:
         informe=f'''
 ##############################
@@ -282,7 +296,7 @@ puertos por defecto abiertos:
         with open(data.nombre_arch,'a') as arch:
             arch.write(informe)
     except Exception as e:
-        print(f'ocurrio un error: {e}')
+        logging.critical('ocurrio un error en la creacion del informe')
 
 def detener():
     global q,n,deten
@@ -311,6 +325,7 @@ def detener():
                     tiempo = time()
                 if porcentaje == '100.0%' or deten:
                     print(Fore.GREEN+'\nescaneo finalizado\n')
+                    logging.info('deteniendo herramienta')
                     deten= True
             
     else:
@@ -319,9 +334,10 @@ def detener():
                 while n < params.param.buscar and not deten and system() == 'Windows':
                     if keyboard.is_pressed('esc'):
                         print(Fore.RED+'deteniendo')
+                        logging.info('deteniendo herramienta')
                         deten = True
         except AttributeError:
-            pass
+            logging.warning('pequeño error en funcion detener')
 
 def latencia(ip):
     try:
@@ -339,6 +355,7 @@ def latencia(ip):
         return 1
     
 def scan_normal(ip,timeout):
+    logging.info('iniciando escaneo normal...')
     dato = cargar_json('data_puertos.json')
     print(Fore.WHITE+f'escaneando puertos TCP de la ip: {ip}')
     try:
@@ -347,7 +364,7 @@ def scan_normal(ip,timeout):
 
        
     except Exception as e:
-        print(Fore.RED+f'ocurrio un error:{e}')
+        logging.critical('ocurrio un error inesperado en el escaneo normal')
 
     finally:
     
@@ -363,6 +380,7 @@ def scan_normal(ip,timeout):
         data.p_abiertos.clear()
 
 def scan_selectivo(ip,timeout,puertos):
+    logging.info('iniciando escaneo selectivo...')
     data_p = cargar_json('data_puertos.json')
     eleccion = list(puertos.split(','))
     cuerpo_scan(ip=ip,lista=eleccion,timeout=timeout,json_=data_p)
@@ -373,6 +391,7 @@ def scan_agresivo(ip,puerto,timeout,json_):
     
     
     try:   
+        
         s = socket.socket()       
         s.settimeout(timeout)
 
@@ -383,17 +402,16 @@ def scan_agresivo(ip,puerto,timeout,json_):
                     data.p_abiertos.append(puerto)
             
         except PermissionError:
-            print(Fore.RED+f'sin permisos para escanear el puerto: {puerto}')
+            pass
         except OSError:
-            pass      
-        except Exception as e:
-            print(Fore.RED+f'ocurrio un error:{e}')
-		    
+            logging.warning('OSError durante la conexion del socket en scan_agresivo')
+                 
         finally:
             s.close()
                
     except ValueError:
         pass
+    except: logging.error('error desconocido en scan_agresivo')
          
 #la funcion para agregar arhivos, corresponde a buscar
 def agregar_arch(datos):
@@ -431,11 +449,11 @@ def buscar():
     except KeyError: pass
 
     except Exception as e:
-        print(Fore.RED+f'\nerror inesperado: {e}\n')
+        logging.error('error inesperado')
         deten = True
 
 def timeout(latencia_prom):
-
+    logging.info('seteando timeout...')
     print(f'latencia promedio:{latencia_prom} seg')
     #para redes relativamente rapidas
     if latencia_prom >= 0.015 and latencia_prom <= 0.3:
@@ -451,7 +469,7 @@ def timeout(latencia_prom):
 ipv4= []
 lock = Lock()  
 def descubrir_red(ip,i,timeout):
-    
+    logging.info('descubriendo la red...')
     try:
         direc = ip.replace('x',str(i))
         ping_=ping(direc,timeout=timeout)
@@ -461,4 +479,4 @@ def descubrir_red(ip,i,timeout):
                 with lock:
                     ipv4.append(direc)
     except:
-        pass
+        logging.error('error en descubrir_red')

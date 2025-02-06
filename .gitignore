@@ -4,3 +4,4 @@ android/
 keyboard/
 !requirements.txt
 scip.bat
+*.log

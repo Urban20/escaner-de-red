@@ -7,6 +7,7 @@ import func
 from bs4 import BeautifulSoup
 from subprocess import run
 import re
+import logging
 
 'este modulo contiene las clases que se utilizan en el script'
 
@@ -19,6 +20,7 @@ class Ip():
         self.validado = False
     
     def validacion(self,ip):
+        logging.info('validando ip...')
         try:
             ip_ =socket.gethostbyname(ip)
             if ipaddress.ip_address(ip_).is_global:
@@ -33,9 +35,10 @@ class Ip():
             print(Fore.RED+'el dominio/ip proporcionado es incorrecto')
 
         except Exception as e:
-            print(Fore.RED+f'ocurrio el siguiente error: {e}')
+            logging.critical('ocurrio un error durante la validacion de ip')
 
     def informacion(self):
+        logging.info('intentando obtener informacion de ip...')
         try:
             if self.validado and self.ip != None:
                 ip_api = requests.get(f'http://ip-api.com/json/{self.ip}')
@@ -62,9 +65,10 @@ class Ip():
 #################################################''')
 
         except Exception as e:
-            print(Fore.RED+f'ocurrio un error en el apartado de apis: {e}')
+            logging.critical('ocurrio un error al consumir las apis apis')
 
     def reputacion(self):
+        logging.info('intentando obtener reputacion de ip...')
         try:
             if self.validado:
                 rep = func.confiabilidad_ip(self.ip)
@@ -79,7 +83,7 @@ class Ip():
             else:
                 print(Fore.RED+'no se pudo obtener la reputacion: ip no validada')
         except Exception as e:
-            print(Fore.RED+f'hubo un error en reputacion: {e}')
+            logging.critical('hubo un error durante la obtencion de reputacion de la ip')
 
 ip = Ip()
 
@@ -94,6 +98,7 @@ class Bot_Crawler():
 
 
     def scrapping_shodan(self):
+        logging.info('se intenta hacer scrapping en shodan...')
 
         if  self.status == 200 and ip.validado and self.ip != None:
             print(Fore.RED+'\n###########\nshodan\n###########\n')
@@ -122,6 +127,7 @@ class Bot_Crawler():
             
                
     def obtener_links(self):
+        logging.info('se inicia la obtencion de enlaces...')
         status = func.cargar_json('status.json')
         if ip.validado and self.status == 200:
             try:
@@ -134,7 +140,7 @@ class Bot_Crawler():
                         print(func.rastreo(link,status))
             
             except Exception as e:
-                print(Fore.RED+f'ocurrio un error en obtener_links: {e}')
+                logging.critical('ocurrio un error en obtener_links')
 
 class Ipv4():
     def __init__(self,ip):
@@ -144,14 +150,14 @@ class Ipv4():
         self.compania = None
 
     def ttl(self):
-        
+        logging.info('calculando ttl...')
         out= str(run(args=['ping','-c','1',self.ipv4],capture_output=True,text=True)).split()
         for x in out:
             if 'ttl' in x:
                 return int(x.split('=')[-1].strip())
 
     def obtener_mac(self):
-        
+        logging.info('obteniendo direcciones mac...')
         for el in str(run(['ip','neigh','show',self.ipv4],text=True,capture_output=True)).split():
             if ':' in el:
                 self.mac = el
@@ -159,6 +165,7 @@ class Ipv4():
         return self.mac
             
     def obtener_nombre(self):
+        logging.info('obteniendo nombres...')
         try:
             self.nombre = socket.gethostbyaddr(self.ipv4)[0].split('.')[0].strip()
         except:
@@ -166,6 +173,7 @@ class Ipv4():
         return(self.nombre)
     
     def obtener_compania(self):
+        logging.info('obteniendo informacion de las companias de los dispositivos...')
         try:
             api= requests.get(f'https://www.macvendorlookup.com/api/v2/{self.mac}').json()
             for el in api:

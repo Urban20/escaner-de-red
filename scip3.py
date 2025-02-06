@@ -7,6 +7,7 @@ import objetos as objs
 from concurrent.futures import ThreadPoolExecutor
 from platform import system
 from socket import gethostbyname
+from logging import info,critical
 
 'este modulo contiene el script principal el cual llama a todos los modulos necesarios para su funcionamiento'
 
@@ -28,6 +29,7 @@ def inicio_scan(msg):
 
 def crear_crawler(ip):
     #solo se llama al realizar OSINT con shodan
+    info('creando objeto crawler...')
     
     print(Fore.RED+'\niniciando crawler')
     
@@ -64,11 +66,7 @@ try:
         except AttributeError:
             print(Fore.RED+'\nsin informacion al respecto\n')
             
-        except Exception as e:
-            print(f'error al buscar en shodan:\n{e}\n')
-
-
-
+        
     if params.param.agresivo:
         #t es el timeout para los escaneos agresivos
         if params.param.timeout == None:
@@ -76,32 +74,32 @@ try:
         else:
             t = params.param.timeout
 
-
-        try:
-            if params.param.ip != None:
-                print(Fore.WHITE+'''\n\n#################################################''')
-                print(Fore.WHITE+'escaneo agresivo en curso...')
-                json = func.cargar_json('data_puertos.json')
-                print(f'num de hilos: {hilo_}\n\rtimeout:{t}')
-                with ThreadPoolExecutor(max_workers=hilo_) as ejec:
-                    ip = gethostbyname(params.param.ip)
-                    for x in func.puertos:
-                        
-                        ejec.submit(func.scan_agresivo,ip,x,t,json)
-
-                if not data.p_abiertos:
-                    print(Fore.RED+'\nningun puerto encontrado\n')        
+        
+        
+        if params.param.ip != None:
+            print(Fore.WHITE+'''\n\n#################################################''')
+            info('escaneo agresivo iniciado...')
+            print(Fore.WHITE+'escaneo agresivo en curso...')
+            json = func.cargar_json('data_puertos.json')
+            print(f'num de hilos: {hilo_}\n\rtimeout:{t}')
+            with ThreadPoolExecutor(max_workers=hilo_) as ejec:
+                ip = gethostbyname(params.param.ip)
+                for x in func.puertos:
                     
-                if params.param.info:
-                    for x in data.p_abiertos:
-                        func.informacion(ip,x)
+                    ejec.submit(func.scan_agresivo,ip,x,t,json)
 
-                func.preg_informe(ip=ip,lista=data.p_abiertos)
-            
-            else:
-                print(Fore.RED+'\nespecificar parametro [-ip]\n')        
-        except Exception as e:
-            print(Fore.RED+f'''error al escanear con metodo agresivo:\n{e}''')
+            if not data.p_abiertos:
+                print(Fore.RED+'\nningun puerto encontrado\n')        
+                
+            if params.param.info:
+                for x in data.p_abiertos:
+                    func.informacion(ip,x)
+
+            func.preg_informe(ip=ip,lista=data.p_abiertos)
+        
+        else:
+            print(Fore.RED+'\nespecificar parametro [-ip]\n')        
+    
     
     #escaneo normal
     elif params.param.normal and params.param.buscar == None:
@@ -132,70 +130,68 @@ try:
     
     #para descubrir ips privadas
     elif params.param.ip != None and params.param.descubrir:
-        try:
         
-            if params.param.timeout != None:
-                timeout_ = params.param.timeout
-            else:
-                timeout_ = 4
         
-            print(Fore.GREEN+'rastreando ips privadas: ')
-            for x in range(1,255):
-                try:
+        if params.param.timeout != None:
+            timeout_ = params.param.timeout
+        else:
+            timeout_ = 4
+    
+        print(Fore.GREEN+'rastreando ips privadas: ')
+        for x in range(1,255):
+            try:
+            
+                ejec= threading.Thread(target=func.descubrir_red,args=(params.param.ip,x,timeout_))
+                if 'x' in params.param.ip:
+                    ejec.start()
+                else:
+                    print(Fore.RED+'la ip debe contener una x al final, ejemplo "192.168.0.x"')
+                    break
                 
-                    ejec= threading.Thread(target=func.descubrir_red,args=(params.param.ip,x,timeout_))
-                    if 'x' in params.param.ip:
-                        ejec.start()
-                    else:
-                        print(Fore.RED+'la ip debe contener una x al final, ejemplo "192.168.0.x"')
-                        break
-                    
-                except: pass
-                
-            ejec.join()
+            except: pass
+            
+        ejec.join()
 
-            if system() == 'Linux':
-                for ip in func.ipv4:
+        if system() == 'Linux':
+            for ip in func.ipv4:
+            
+                ipv4 = objs.Ipv4(ip=ip)
+                codigo = ipv4.ttl()
+                nombre = ipv4.obtener_nombre()
+                mac  = ipv4.obtener_mac()
+                compania = ipv4.obtener_compania()
+                json = func.cargar_json('ttl.json')
+                if codigo != None:
+                    print(Fore.GREEN+f'\n{ip}:\n')
+                    print(json.get(str(codigo)))
+                    print(Fore.CYAN+f'nombre de disp. en la red: {nombre}')
+                    print(Fore.CYAN+f'direccion mac: {mac}')
+                    print(Fore.CYAN+f'compania: {compania}')
                 
-                    ipv4 = objs.Ipv4(ip=ip)
-                    codigo = ipv4.ttl()
-                    nombre = ipv4.obtener_nombre()
-                    mac  = ipv4.obtener_mac()
-                    compania = ipv4.obtener_compania()
-                    json = func.cargar_json('ttl.json')
-                    if codigo != None:
-                        print(Fore.GREEN+f'\n{ip}:\n')
-                        print(json.get(str(codigo)))
-                        print(Fore.CYAN+f'nombre de disp. en la red: {nombre}')
-                        print(Fore.CYAN+f'direccion mac: {mac}')
-                        print(Fore.CYAN+f'compania: {compania}')
-                    
-        except:
-            pass
+        
         #buscar ips publicas
     elif params.param.buscar != None and not params.param.normal and params.param.ip == None:
-        try:
-            print(Fore.GREEN+'\n* rastreando ips publicas...\n')
-            threading.Thread(target=func.detener).start()
-        
-            while func.n < params.param.buscar and not func.deten:
-                
-                busq = func.buscar()
-                
-                if busq != None:
-                    print(Fore.WHITE+busq)
-                    func.n+=1
-                
-            if not params.param.guardar:
-                if str(input(Fore.WHITE+'[1] guardar informacion >> ')).strip() == '1':
-                    for ip in data.lista_ips:
-                        func.agregar_arch(ip)
-                    print(Fore.GREEN+'\nla informacion fue guardada\n')
-                else:
-                    print(Fore.RED+'\nla informacion no fue guardada\n')
+    
+        print(Fore.GREEN+'\n* rastreando ips publicas...\n')
+        threading.Thread(target=func.detener).start()
+    
+        while func.n < params.param.buscar and not func.deten:
+            
+            busq = func.buscar()
+            
+            if busq != None:
+                print(Fore.WHITE+busq)
+                func.n+=1
+            
+        if not params.param.guardar:
+            if str(input(Fore.WHITE+'[1] guardar informacion >> ')).strip() == '1':
+                for ip in data.lista_ips:
+                    func.agregar_arch(ip)
+                print(Fore.GREEN+'\nla informacion fue guardada\n')
+            else:
+                print(Fore.RED+'\nla informacion no fue guardada\n')
 
-        except Exception as e:
-            print(f'''ocurrio un error:\n{e}''')
+    
 
     if params.param.ayuda:
         func.ayuda()
@@ -215,3 +211,6 @@ try:
 except KeyboardInterrupt:
     func.deten = True
     exit(1)
+except: critical('error critico desconocido en el flujo principal')
+finally:
+    info('la herramienta finalizo con exito')
