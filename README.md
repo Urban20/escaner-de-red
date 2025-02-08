@@ -1,4 +1,4 @@
-[![logo.png](https://i.postimg.cc/59Y21Y3Y/logo.png)](https://postimg.cc/Thx6JPBf)
+![logo.png](https://github.com/Urban20/escaner-de-red/blob/main/img/logo.png?raw=true)
 
 > [!IMPORTANT]
 antes de ejecutar la herramienta se debe abrir un terminal en el directorio y ejecutar el comando:
@@ -39,15 +39,15 @@ scip -ip www.google.com -n ---> es un escaneo mas lento pero mas fiable, hace pi
 
 ### parametros:
   
-[![parametros.png](https://i.postimg.cc/PJ9gV1kV/parametros.png)](https://postimg.cc/1V07fnXD)
+![parametros.png](https://github.com/Urban20/escaner-de-red/blob/main/img/parametros.png?raw=true)
 
 > **algunas demostraciones graficas de como se usa el script:**
 
-[![demo1.png](https://i.postimg.cc/90ZVN27C/demo1.png)](https://postimg.cc/BPSdXdpV)
+![demo1.png](https://github.com/Urban20/escaner-de-red/blob/main/img/demo1.png?raw=true)
 
-[![demo2.png](https://i.postimg.cc/pXQRf2vB/demo2.png)](https://postimg.cc/w7BCHY7t)
+![demo2.png](https://github.com/Urban20/escaner-de-red/blob/main/img/demo2.png?raw=true)
 
-[![demo3.png](https://i.postimg.cc/FH9mG2sX/demo3.png)](https://postimg.cc/pp1gLcFs)
+[![demo3.png](https://github.com/Urban20/escaner-de-red/blob/main/img/demo3.png?raw=true)
 
 > [!WARNING]
 no se recomienda poner un numero muy alto para el parametro b ya que esta funcion consume APIS con un numero finito de solicitudes por minuto, si se excede el limite se debe esperar una hora para que tu ip sea desbloqueada
