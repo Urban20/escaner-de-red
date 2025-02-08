@@ -95,8 +95,8 @@ try:
             if params.param.info:
                 for x in data.p_abiertos:
                     func.informacion(ip,x)
-
-            func.preg_informe(ip=ip,lista=data.p_abiertos)
+            
+            func.preg_informe()
         
         else:
             print(Fore.RED+'\nespecificar parametro [-ip]\n')        

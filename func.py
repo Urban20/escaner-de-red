@@ -21,8 +21,12 @@ if system() == 'Windows':
 
 
 #cargar las opciones del log
-with open('opciones.json','r') as opciones:
-    cont_op = json.load(opciones)
+try:
+    with open('opciones.json','r') as opciones:
+        cont_op = json.load(opciones)
+except:
+    print(Fore.RED+'\ncofiguracion incorrecta, revisar opciones.json\n')
+    exit(1) 
 
 op = cont_op['nivel']
 
@@ -34,15 +38,19 @@ match cont_op['nivel']:
     case _:
         nivel = 'error'
 
+#nombre del archivo que se crea al guardar una ip escaneada
+nombre_arch = cont_op['arch-guardado-de-puertos']
+
+#nombre del archivo donde se guardan las ips encontradas
+nombre_b= cont_op['arch-ips-encontradas']
+
 print(f'\nlog >> {op}\n')
-try:
-    logging.basicConfig(filename='registro.log',
-                        level=nivel,
-                        datefmt='%a, %d %b %Y %H:%M:%S',
-                        format='%(asctime)s-%(msg)s')
-except ValueError:
-    print(Fore.RED+'\ncofiguracion incorrecta, revisar opciones.json\n')
-    exit(1)                       
+
+logging.basicConfig(filename='registro.log',
+                    level=nivel,
+                    datefmt='%a, %d %b %Y %H:%M:%S',
+                    format='%(asctime)s-%(msg)s')
+                    
 
 
 logging.warning('iniciando ejecucion de la herramienta...')
@@ -55,6 +63,7 @@ def cargar_json(archivo):
     try:
         logging.info('cargando json...')
         with open(f'json/{archivo}','r') as arch:
+            #retorna el diccionario
             return json.load(arch)
     except Exception as e:
         logging.critical(f'error en la carga de uno o varios archivos JSON')
@@ -116,7 +125,7 @@ def fingerprint(ip,puerto):
             return None
     logging.info('se finalizo el fingerprint')
 
-def preg_informe(ip,lista):
+def preg_informe():
     
     preg = str(input(Fore.WHITE+'[1] guardar informe >> ').strip())
     if preg == '1':
@@ -128,7 +137,7 @@ def cuerpo_scan(lista,ip,timeout,json_):
     
     #para el escaneo selectivo y normal: este es el formato para estos dos tipos de escaneos
     global q
-    # q solo se utiliza con normal
+    # q solo se utiliza con normal, es un numero el cual se incrementa con cada puerto escaneado
     global deten
 
     for x in lista:
@@ -171,7 +180,7 @@ def cuerpo_scan(lista,ip,timeout,json_):
 def abrir_arch():
     logging.info('iniciando lectura de archivo...')
     try:
-        with open(data.nombre_b,'r') as arch:
+        with open(nombre_b,'r') as arch:
             print(arch.read())
         
     except FileNotFoundError:
@@ -180,7 +189,7 @@ def abrir_arch():
         logging.critical(f'hubo un error en la apertura de un archivo')
 
 def borrar_arch():
-    with open(data.nombre_b,'w') as arch:
+    with open(nombre_b,'w') as arch:
         arch.write('')
         
 def ayuda():
@@ -324,7 +333,7 @@ puertos por defecto abiertos:
         '''
 
 
-        with open(data.nombre_arch,'a') as arch:
+        with open(nombre_arch,'a') as arch:
             arch.write(informe)
     except Exception as e:
         logging.critical('ocurrio un error en la creacion del informe')
@@ -406,7 +415,7 @@ def scan_normal(ip,timeout):
            
             sleep(1)
             
-            preg_informe(ip=params.param.ip,lista=data.p_abiertos)
+            preg_informe()
                   
         data.p_abiertos.clear()
 
@@ -446,7 +455,7 @@ def scan_agresivo(ip,puerto,timeout,json_):
          
 #la funcion para agregar arhivos, corresponde a buscar
 def agregar_arch(datos):
-    with open(data.nombre_b,'a') as ip_lista:
+    with open(nombre_b,'a') as ip_lista:
         ip_lista.write(datos)
 
 def buscar():

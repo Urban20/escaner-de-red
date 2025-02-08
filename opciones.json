@@ -1,7 +1,8 @@
 {
-    "comentario" : "este json establece el nivel de prioridad del log: basico / detallado",
+    "comentario" : "el nivel establece prioridad del log: basico (solo muestra info de errores) / detallado (registra toda la actividad de la herramienta)",
 
-    "nivel": "detallado"
-
+    "nivel": "detallado",
+    "arch-ips-encontradas":"ips-encontradas.txt",
+    "arch-guardado-de-puertos":"ips-guardadas.txt"
 
 }
