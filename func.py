@@ -36,7 +36,8 @@ match cont_op['nivel']:
     case 'detallado':
         nivel = logging.INFO
     case _:
-        nivel = 'error'
+        print(Fore.RED+'\ncofiguracion incorrecta, revisar opciones.json\n')
+        exit(1)
 
 #nombre del archivo que se crea al guardar una ip escaneada
 nombre_arch = cont_op['arch-guardado-de-puertos']
@@ -44,7 +45,7 @@ nombre_arch = cont_op['arch-guardado-de-puertos']
 #nombre del archivo donde se guardan las ips encontradas
 nombre_b= cont_op['arch-ips-encontradas']
 
-print(f'\nlog >> {op}\n')
+print(f'\nlog >> {op}, entrar a opciones.json para modificarlo\n')
 
 logging.basicConfig(filename='registro.log',
                     level=nivel,
