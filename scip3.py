@@ -201,14 +201,10 @@ try:
         func.borrar_arch()
 
     elif params.param.abrir:
-        func.abrir_arch()
+        func.abrir_arch(func.nombre_b)
 
     if params.param.lectura:
-        try:
-            with open(data.nombre_arch,'r') as registro:
-                print(Fore.CYAN+registro.read())
-        except FileNotFoundError:
-            print(Fore.RED+'registro no encontrado')       
+        func.abrir_arch(func.nombre_arch)     
 except KeyboardInterrupt:
     func.deten = True
     exit(1)

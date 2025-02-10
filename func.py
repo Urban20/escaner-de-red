@@ -178,10 +178,10 @@ def cuerpo_scan(lista,ip,timeout,json_):
         else:
             break
 
-def abrir_arch():
+def abrir_arch(txt):
     logging.info('iniciando lectura de archivo...')
     try:
-        with open(nombre_b,'r') as arch:
+        with open(txt,'r') as arch:
             print(arch.read())
         
     except FileNotFoundError:
