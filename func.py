@@ -190,8 +190,13 @@ def abrir_arch(txt):
         logging.critical(f'hubo un error en la apertura de un archivo')
 
 def borrar_arch():
-    with open(nombre_b,'w') as arch:
-        arch.write('')
+    try:
+        with open(nombre_b,'w') as arch:
+            arch.write('')
+        print(Fore.GREEN+f'\narchivo borrado: {nombre_b}\n')
+        logging.info('se elimino el contenido del registro d eips encontradas')
+    except:
+        logging.error('hubo un error en borrar_arch')
         
 def ayuda():
     
