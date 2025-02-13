@@ -10,6 +10,7 @@ from concurrent.futures import ThreadPoolExecutor
 from platform import system
 from socket import gethostbyname
 from logging import info,critical,warning
+from syn import *
 
 
 'este modulo contiene el script principal el cual llama a todos los modulos necesarios para su funcionamiento'
@@ -29,6 +30,12 @@ def inicio_scan(msg):
     print(f'timeout: {tim}')
     return tim
 
+
+#t es el timeout para los escaneos agresivos
+if param.timeout == None:
+    t = 0.5
+else:
+    t = param.timeout
 
 def crear_crawler(ip_):
     #solo se llama al realizar OSINT con shodan
@@ -71,14 +78,7 @@ try:
             
         
     if param.agresivo:
-        #t es el timeout para los escaneos agresivos
-        if param.timeout == None:
-            t = 0.5
-        else:
-            t = param.timeout
 
-        
-        
         if param.ip != None:
             print(Fore.WHITE+'''\n\n#################################################''')
             info('escaneo agresivo iniciado...')
@@ -103,7 +103,14 @@ try:
         else:
             print(Fore.RED+'\nespecificar parametro [-ip]\n')        
     
-    
+
+    elif param.syn:
+        with ThreadPoolExecutor(max_workers=100) as ej:
+            for p in puertos:
+                syn = Escaner_scapy(ip=param.ip,puerto=p,timeout=t)
+                ej.submit(syn.escaneo_syn())  
+
+
     #escaneo normal
     elif param.normal and param.buscar == None:
         if param.ip != None:
