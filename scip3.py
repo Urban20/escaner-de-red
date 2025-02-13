@@ -1,9 +1,11 @@
+#! /usr/bin/env python3
+
 import threading
-import func 
+from func import *
 from colorama import init,Fore
-import params 
-import data 
-import objetos as objs
+from params import *
+from data import *
+from objetos import *
 from concurrent.futures import ThreadPoolExecutor
 from platform import system
 from socket import gethostbyname
@@ -19,48 +21,48 @@ def inicio_scan(msg):
     print(Fore.WHITE+f'\n\n#################################################')
     print(Fore.WHITE+msg)
     print('\n"esc" para salir\n')
-    if params.param.timeout == None:
-        lat_prom= func.latencia(params.param.ip)
-        tim = func.timeout(lat_prom)
+    if param.timeout == None:
+        lat_prom= latencia(param.ip)
+        tim = timeout(lat_prom)
     else:
-        tim = params.param.timeout
+        tim = param.timeout
     print(f'timeout: {tim}')
     return tim
 
 
-def crear_crawler(ip):
+def crear_crawler(ip_):
     #solo se llama al realizar OSINT con shodan
     info('creando objeto crawler...')
     
     print(Fore.RED+'\niniciando crawler')
     
     #ip_num = ip numerica
-    ip_num = objs.ip.validacion(ip)
-    objs.ip.informacion()
-    objs.ip.reputacion()
+    ip_num = ip.validacion(ip_)
+    ip.informacion()
+    ip.reputacion()
 
     #crawler
-    crawler = objs.Bot_Crawler(ip=ip_num)
+    crawler = Bot_Crawler(ip=ip_num)
     crawler.scrapping_shodan()
     crawler.obtener_links()
 
 
-if params.param.hilo == None:
+if param.hilo == None:
     hilo_= 100
 else:
-    hilo_ = params.param.hilo
+    hilo_ = param.hilo
 
 
 try:
     #acciones de los parametros-----------------
-    if params.param.shodan:
+    if param.shodan:
         try:
-            if params.param.ip != None:
-                if ',' in params.param.ip:
-                    for x in params.param.ip.split(','):
+            if param.ip != None:
+                if ',' in param.ip:
+                    for x in param.ip.split(','):
                         crear_crawler(x)   
                 else:       
-                    crear_crawler(params.param.ip)
+                    crear_crawler(param.ip)
             else:
                 print(Fore.RED+'especificar parametro [-ip]')
                 
@@ -68,73 +70,73 @@ try:
             print(Fore.RED+'\nsin informacion al respecto\n')
             
         
-    if params.param.agresivo:
+    if param.agresivo:
         #t es el timeout para los escaneos agresivos
-        if params.param.timeout == None:
+        if param.timeout == None:
             t = 0.5
         else:
-            t = params.param.timeout
+            t = param.timeout
 
         
         
-        if params.param.ip != None:
+        if param.ip != None:
             print(Fore.WHITE+'''\n\n#################################################''')
             info('escaneo agresivo iniciado...')
             print(Fore.WHITE+'escaneo agresivo en curso...')
-            json = func.cargar_json('data_puertos.json')
+            json = cargar_json('data_puertos.json')
             print(f'num de hilos: {hilo_}\n\rtimeout:{t}')
             with ThreadPoolExecutor(max_workers=hilo_) as ejec:
-                ip = gethostbyname(params.param.ip)
-                for x in func.puertos:
+                ip = gethostbyname(param.ip)
+                for x in puertos:
                     
-                    ejec.submit(func.scan_agresivo,ip,x,t,json)
+                    ejec.submit(scan_agresivo,ip,x,t,json)
 
-            if not data.p_abiertos:
+            if not p_abiertos:
                 print(Fore.RED+'\nningun puerto encontrado\n')        
                 
-            if params.param.info:
-                for x in data.p_abiertos:
-                    func.informacion(ip,x)
+            if param.info:
+                for x in p_abiertos:
+                    informacion(ip,x)
             
-            func.preg_informe()
+            preg_informe()
         
         else:
             print(Fore.RED+'\nespecificar parametro [-ip]\n')        
     
     
     #escaneo normal
-    elif params.param.normal and params.param.buscar == None:
-        if params.param.ip != None:
+    elif param.normal and param.buscar == None:
+        if param.ip != None:
             
             scan= inicio_scan(msg='escaneo normal en curso...')
 
-            threading.Thread(target=func.detener).start()
-            func.scan_normal(params.param.ip,scan)   
+            threading.Thread(target=detener).start()
+            scan_normal(param.ip,scan)   
             
         else:
             print(Fore.RED+'especificar parametro [-ip]') 
 
     #escaneo selectivo
-    elif params.param.selectivo:
-        if params.param.ip != None:
+    elif param.selectivo:
+        if param.ip != None:
             
         
             scan= inicio_scan(msg='escaneo selectivo en curso...')
 
-            func.scan_selectivo(params.param.ip,scan,params.param.selectivo)
-            if params.param.info:
-                for x in data.p_abiertos:
-                    func.informacion(params.param.ip,x)
+            scan_selectivo(param.ip,scan,param.selectivo)
+            if param.info:
+                for x in p_abiertos:
+                    informacion(param.ip,x)
 
         else:
             print(Fore.RED+'\nespecificar parametro [-ip]\n')
     
     #para descubrir ips privadas
-    elif params.param.ip != None and params.param.descubrir:
+    elif param.ip != None and param.descubrir:
         
         
-        if params.param.timeout != None:
-            timeout_ = params.param.timeout
+        if param.timeout != None:
+            timeout_ = param.timeout
         else:
             timeout_ = 4
     
@@ -142,8 +144,8 @@ try:
         for x in range(1,255):
             try:
             
-                ejec= threading.Thread(target=func.descubrir_red,args=(params.param.ip,x,timeout_))
-                if params.param.ip[-1] == 'x':
+                ejec= threading.Thread(target=descubrir_red,args=(param.ip,x,timeout_))
+                if param.ip[-1] == 'x':
                     ejec.start()
                 else:
                     print(Fore.RED+'la ip debe contener una x al final, ejemplo "192.168.0.x"')
@@ -154,14 +156,14 @@ try:
         ejec.join()
 
         if system() == 'Linux':
-            for ip in func.ipv4:
+            for ip in ipv4:
             
-                ipv4 = objs.Ipv4(ip=ip)
+                ipv4 = Ipv4(ip=ip)
                 codigo = ipv4.ttl()
                 nombre = ipv4.obtener_nombre()
                 mac  = ipv4.obtener_mac()
                 compania = ipv4.obtener_compania()
-                json = func.cargar_json('ttl.json')
+                json = cargar_json('ttl.json')
                 if codigo != None:
                     print(Fore.GREEN+f'\n{ip}:\n')
                     print(json.get(str(codigo)))
@@ -171,42 +173,42 @@ try:
                 
         
         #buscar ips publicas
-    elif params.param.buscar != None and not params.param.normal and params.param.ip == None:
+    elif param.buscar != None and not param.normal and param.ip == None:
     
         print(Fore.GREEN+'\n* rastreando ips publicas...\n')
-        threading.Thread(target=func.detener).start()
+        threading.Thread(target=detener).start()
     
-        while func.n < params.param.buscar and not func.deten:
+        while n < param.buscar and not deten:
             
-            busq = func.buscar()
+            busq = buscar()
             
             if busq != None:
                 print(Fore.WHITE+busq)
-                func.n+=1
+                n+=1
             
-        if not params.param.guardar:
+        if not param.guardar:
             if str(input(Fore.WHITE+'[1] guardar informacion >> ')).strip() == '1':
-                for ip in data.lista_ips:
-                    func.agregar_arch(ip)
+                for ip in lista_ips:
+                    agregar_arch(ip)
                 print(Fore.GREEN+'\nla informacion fue guardada\n')
             else:
                 print(Fore.RED+'\nla informacion no fue guardada\n')
 
     
 
-    if params.param.ayuda:
-        func.ayuda()
+    if param.ayuda:
+        ayuda()
 
-    if params.param.borrar:
-        func.borrar_arch()
+    if param.borrar:
+        borrar_arch()
 
-    elif params.param.abrir:
-        func.abrir_arch(func.nombre_b)
+    elif param.abrir:
+        abrir_arch(nombre_b)
 
-    if params.param.lectura:
-        func.abrir_arch(func.nombre_arch)     
+    if param.lectura:
+        abrir_arch(nombre_arch)     
 except KeyboardInterrupt:
-    func.deten = True
+    deten = True
     exit(1)
 except Exception as e: critical(f'error critico desconocido en el flujo principal')
 finally:
