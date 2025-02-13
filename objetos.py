@@ -5,7 +5,7 @@ from colorama import Fore,init
 import requests
 import func 
 from bs4 import BeautifulSoup
-from subprocess import run
+import subprocess as sp
 import re
 import logging
 
@@ -151,23 +151,26 @@ class Ipv4():
 
     def ttl(self):
         logging.info('calculando ttl...')
-        out= str(run(args=['ping','-c','1',self.ipv4],capture_output=True,text=True)).split()
-        for x in out:
-            if 'ttl' in x:
-                return int(x.split('=')[-1].strip())
+        try:
+            out= sp.check_output(['ping','-c','1',self.ipv4],text=True)
+            return re.search(r'ttl=(\d+)',out.lower()).group(1)
+        except:
+            return None
 
     def obtener_mac(self):
         logging.info('obteniendo direcciones mac...')
-        for el in str(run(['ip','neigh','show',self.ipv4],text=True,capture_output=True)).split():
-            if ':' in el:
-                self.mac = el
-
-        return self.mac
+        try:
+            out =str(sp.check_output(['ip','neigh','show',self.ipv4],text=True))
             
+            self.mac = re.search(r'\w+:\w+:\w+:\w+:\w+:\w+',out.lower()).group()
+
+            return self.mac
+        except:
+            return None
     def obtener_nombre(self):
         logging.info('obteniendo nombres...')
         try:
-            self.nombre = socket.gethostbyaddr(self.ipv4)[0].split('.')[0].strip()
+            self.nombre = re.search(r'(\w+)\.',socket.gethostbyaddr(self.ipv4)[0].lower()).group(1).strip()
         except:
             self.nombre = '[desconocido]'
         return(self.nombre)
@@ -179,6 +182,6 @@ class Ipv4():
             for el in api:
                 self.compania = str(el['company'])
                 return self.compania
-
         except:
             return None
+        

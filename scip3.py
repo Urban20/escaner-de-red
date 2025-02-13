@@ -143,7 +143,7 @@ try:
             try:
             
                 ejec= threading.Thread(target=func.descubrir_red,args=(params.param.ip,x,timeout_))
-                if 'x' in params.param.ip:
+                if params.param.ip[-1] == 'x':
                     ejec.start()
                 else:
                     print(Fore.RED+'la ip debe contener una x al final, ejemplo "192.168.0.x"')
