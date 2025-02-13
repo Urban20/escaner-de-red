@@ -12,6 +12,7 @@ from threading import Lock
 from platform import system
 import json
 import logging
+from syn import *
 if system() == 'Windows':
     import keyboard
 
