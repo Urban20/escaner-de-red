@@ -1,19 +1,18 @@
 from scapy.all import *
 import re
+from colorama import init,Fore
 
+init()
 
-
-class Escaner_scapy():
-    def __init__(self,ip,puerto,timeout):
-        self.ip = ip
-        self.puerto = puerto
-        self.timeout = timeout
+def escaneo_syn(ip,puerto,timeout_):
+    #s_syn --> escaneo syn --> variable
+    try:
+        conf.verb = 0
+        s_syn =  sr1(IP(dst=ip)/TCP(dport=puerto,flags='S'),timeout=timeout_,retry=5)
+        if re.search('SA',s_syn.show(dump=True)):
+            print(Fore.GREEN+f'[*] puerto abierto >> {puerto}')
+    except AttributeError:
+        pass
     
-    def escaneo_syn(self):
-        #s_syn --> escaneo syn 
-        try:
-            s_syn =  sr1(IP(dst=self.ip)/TCP(dport=self.puerto,flags='S'),timeout=self.timeout)
-            if re.search('SA',s_syn.show2(dump=True)):
-                print(f'puerto-abierto >> {self.puerto}')
-        except AttributeError:
-            pass
+def escaneo_udp():
+    pass

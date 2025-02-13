@@ -11,7 +11,7 @@ from platform import system
 from socket import gethostbyname
 from logging import info,critical,warning
 from syn import *
-
+import subprocess as sp
 
 'este modulo contiene el script principal el cual llama a todos los modulos necesarios para su funcionamiento'
 
@@ -30,6 +30,12 @@ def inicio_scan(msg):
     print(f'timeout: {tim}')
     return tim
 
+#revisa si se trata de un usuario root o no
+if system() == 'Linux':
+
+    usuario =sp.check_output('whoami',text=True).lower().strip()
+else:
+    usuario = None
 
 #t es el timeout para los escaneos agresivos
 if param.timeout == None:
@@ -103,13 +109,23 @@ try:
         else:
             print(Fore.RED+'\nespecificar parametro [-ip]\n')        
     
-
-    elif param.syn:
-        with ThreadPoolExecutor(max_workers=100) as ej:
-            for p in puertos:
-                syn = Escaner_scapy(ip=param.ip,puerto=p,timeout=t)
-                ej.submit(syn.escaneo_syn())  
-
+    #escaneo SYN-ACK
+    elif param.syn and param.ip != None:
+        if system() == 'Linux':
+            if usuario == 'root':
+                if param.masivo:
+                    print('\n[*] escaneando todos los puertos...\n')
+                info('se inicia proceso de escaneo syn...')
+                print(Fore.GREEN+'\n[*] escaneo syn en curso ...\n')
+                with ThreadPoolExecutor(max_workers=hilo_) as ej:
+                    for p in puertos:
+                        
+                        proceso =ej.submit(escaneo_syn,param.ip,p,t)
+            else:
+                raise PermissionError
+                      
+        else:
+            print(Fore.RED+'\nescaneos syn-ack:\n[*] funcion exclusiva de Linux\n')
 
     #escaneo normal
     elif param.normal and param.buscar == None:
@@ -148,19 +164,17 @@ try:
             timeout_ = 4
     
         print(Fore.GREEN+'rastreando ips privadas: ')
-        for x in range(1,255):
-            try:
-            
-                ejec= threading.Thread(target=descubrir_red,args=(param.ip,x,timeout_))
-                if param.ip[-1] == 'x':
-                    ejec.start()
-                else:
-                    print(Fore.RED+'la ip debe contener una x al final, ejemplo "192.168.0.x"')
-                    break
+        with ThreadPoolExecutor(max_workers=150) as ejec:
+            for x in range(1,255):
+               
                 
-            except: pass
+                if param.ip[-1] == 'x':
+                    proceso =ejec.submit(descubrir_red,param.ip,x,timeout_) 
+                else:
+                    print(Fore.RED+'\nla ip debe contener una x al final, ejemplo "192.168.0.x"\n')
+                    break
             
-        ejec.join()
+            proceso.result()
 
         if system() == 'Linux':
             for ip in ipv4:
@@ -217,6 +231,11 @@ try:
 except KeyboardInterrupt:
     deten = True
     exit(1)
-except Exception as e: critical(f'error critico desconocido en el flujo principal')
+except PermissionError:
+    print(Fore.RED+'\n[*] no soy root\n')
+    exit(1)
+except Exception as e:
+    critical(f'error critico desconocido en el flujo principal')
+    exit(1)
 finally:
     warning('la herramienta fue finalizada')

@@ -150,7 +150,7 @@ def cuerpo_scan(lista,ip,timeout,json_):
             try:
                 if s.connect_ex((ip,int(x))) == 0:
 
-                    print(Fore.GREEN+f'[►] abierto: {x}')
+                    print(Fore.GREEN+f'[*] puerto abierto >> {x}')
 
                     print(f'uso mas comun: {json_[str(x)]}')
                     data.p_abiertos.append(int(x))
@@ -443,7 +443,7 @@ def scan_agresivo(ip,puerto,timeout,json_):
 
         try:
             if s.connect_ex((ip.strip(),puerto)) == 0:
-                print(Fore.GREEN+f'[►] abierto: {puerto}\n servicio mas probable: {json_.get(str(puerto))}\n\r')
+                print(Fore.GREEN+f'[*] puerto abierto >> {puerto}\n servicio mas probable: {json_.get(str(puerto))}\n\r')
                 with data.cerradura:
                     data.p_abiertos.append(puerto)
             
@@ -516,13 +516,11 @@ ipv4= []
 lock = Lock()  
 def descubrir_red(ip,i,timeout):
     logging.info('descubriendo la red...')
-    try:
-        direc = ip.replace('x',str(i))
-        ping_=ping(direc,timeout=timeout)
-        if ping_ != None and ping_ != False:
-            if ipaddress.ip_address(direc).is_private:
-                print(Fore.WHITE+direc)
-                with lock:
-                    ipv4.append(direc)
-    except Exception as e:
-        logging.error(f'error en descubrir_red')
+    
+    direc = ip.replace('x',str(i))
+    ping_=ping(direc,timeout=timeout)
+    if ping_ != None and ping_ != False:
+        if ipaddress.ip_address(direc).is_private:
+            print(Fore.WHITE+direc)
+            with lock:
+                ipv4.append(direc)
