@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#! /usr/bin/env -S python3
 
 import threading
 from func import *
@@ -10,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor
 from platform import system
 from socket import gethostbyname
 from logging import info,critical,warning
-from syn import *
+from scapy_escan import *
 import subprocess as sp
 
 'este modulo contiene el script principal el cual llama a todos los modulos necesarios para su funcionamiento'
@@ -109,7 +109,7 @@ try:
         else:
             print(Fore.RED+'\nespecificar parametro [-ip]\n')        
     
-    #escaneo SYN-ACK
+    #escaneo SYN
     elif param.syn and param.ip != None:
         if system() == 'Linux':
             if usuario == 'root':
@@ -120,10 +120,24 @@ try:
                 with ThreadPoolExecutor(max_workers=hilo_) as ej:
                     for p in puertos:
                         
-                        proceso =ej.submit(escaneo_syn,param.ip,p,t)
+                        proceso =ej.submit(escaneo_syn,param.ip,p)
             else:
                 raise PermissionError
                       
+        else:
+            print(Fore.RED+'\nescaneos syn-ack:\n[*] funcion exclusiva de Linux\n')
+
+    elif param.ack and param.ip != None:
+        if system() == 'Linux':
+            if usuario == 'root':
+                print('\n[*] iniciando escaneo ack...\n')
+
+                for p in param.selectivo.split(','):
+                    
+                    escaneo_ack(param.ip,int(p),t)
+                   
+            else:
+                raise PermissionError
         else:
             print(Fore.RED+'\nescaneos syn-ack:\n[*] funcion exclusiva de Linux\n')
 

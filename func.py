@@ -5,14 +5,14 @@ import ipaddress
 from random import randint
 import params 
 import data 
-from time import time,sleep
+import time
 from bs4 import BeautifulSoup
 from ping3 import ping
 from threading import Lock
 from platform import system
 import json
 import logging
-from syn import *
+from scapy_escan import *
 if system() == 'Windows':
     import keyboard
 
@@ -349,7 +349,7 @@ def detener():
     global q,n,deten
    
     tamaño_list_i = len(puertos)
-    tiempo = time()
+    tiempo = time.time()
     if params.param.buscar == None:
         while not deten:
             
@@ -367,9 +367,9 @@ def detener():
                 val_prog = (q/tamaño_list_i) * 100
                 porcentaje =f'{str(val_prog)[:5]}%'
                     
-                if time() - tiempo > 5:
+                if time.time() - tiempo > 5:
                     print(Fore.CYAN+f'progreso: {porcentaje}')
-                    tiempo = time()
+                    tiempo = time.time()
                 if porcentaje == '100.0%' or deten:
                     print(Fore.GREEN+'\nescaneo finalizado\n')
                     logging.info('deteniendo herramienta')
@@ -420,7 +420,7 @@ def scan_normal(ip,timeout):
                 for x in data.p_abiertos:
                     informacion(params.param.ip,x)
            
-            sleep(1)
+            time.sleep(1)
             
             preg_informe()
                   
