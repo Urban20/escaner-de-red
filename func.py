@@ -46,7 +46,7 @@ nombre_arch = cont_op['arch-guardado-de-puertos']
 #nombre del archivo donde se guardan las ips encontradas
 nombre_b= cont_op['arch-ips-encontradas']
 
-print(f'\nlog >> {op}, entrar a opciones.json para modificarlo\n')
+print(f'\n[*] log >> {op}, entrar a opciones.json para modificarlo\n')
 
 logging.basicConfig(filename='registro.log',
                     level=nivel,
@@ -194,7 +194,7 @@ def borrar_arch():
     try:
         with open(nombre_b,'w') as arch:
             arch.write('')
-        print(Fore.GREEN+f'\narchivo borrado: {nombre_b}\n')
+        print(Fore.GREEN+f'\n[*] archivo borrado: {nombre_b}\n')
         logging.info('se elimino el contenido del registro d eips encontradas')
     except:
         logging.error('hubo un error en borrar_arch')
@@ -275,7 +275,7 @@ puerto:{puerto}\n\r\n\r* respuesta del servidor:\n''')
 def confiabilidad_ip(ip):
     url = 'https://barracudacentral.org/lookups/lookup-reputation'
     if requests.get(url).status_code == 200:
-        print(Fore.WHITE+'\nconfiabilidad de la ip:')
+        print(Fore.WHITE+'\n[*] confiabilidad de la ip:')
         try:
             dir_ = ipaddress.ip_address(ip) 
 
@@ -356,7 +356,7 @@ def detener():
             try:
                 if system() == 'Windows':
                     if keyboard.is_pressed('esc'):
-                        print(Fore.RED+'deteniendo')
+                        print(Fore.RED+'[*] deteniendo')
                         
                         deten = True
             except AttributeError:
@@ -368,10 +368,10 @@ def detener():
                 porcentaje =f'{str(val_prog)[:5]}%'
                     
                 if time.time() - tiempo > 5:
-                    print(Fore.CYAN+f'progreso: {porcentaje}')
+                    print(Fore.CYAN+f'[*] progreso: {porcentaje}')
                     tiempo = time.time()
                 if porcentaje == '100.0%' or deten:
-                    print(Fore.GREEN+'\nescaneo finalizado\n')
+                    print(Fore.GREEN+'\n[+] escaneo finalizado\n')
                     logging.info('deteniendo herramienta')
                     deten= True
             
@@ -380,7 +380,7 @@ def detener():
             
                 while n < params.param.buscar and not deten and system() == 'Windows':
                     if keyboard.is_pressed('esc'):
-                        print(Fore.RED+'deteniendo')
+                        print(Fore.RED+'[+] deteniendo')
                         logging.info('deteniendo herramienta')
                         deten = True
         except AttributeError:
@@ -404,7 +404,7 @@ def latencia(ip):
 def scan_normal(ip,timeout):
     logging.info('iniciando escaneo normal...')
     dato = cargar_json('data_puertos.json')
-    print(Fore.WHITE+f'escaneando puertos TCP de la ip: {ip}')
+    print(Fore.WHITE+f'[+] escaneando puertos TCP de la ip: {ip}')
     try:
             
         cuerpo_scan(ip=ip,timeout=timeout,lista=puertos,json_=dato)
@@ -501,7 +501,7 @@ def buscar():
 
 def timeout(latencia_prom):
     logging.info('seteando timeout...')
-    print(f'latencia promedio:{latencia_prom} seg')
+    print(f'[*] latencia promedio:{latencia_prom} seg')
     #para redes relativamente rapidas
     if latencia_prom >= 0.015 and latencia_prom <= 0.3:
         timeout = latencia_prom * 2
