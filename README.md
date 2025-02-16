@@ -26,7 +26,7 @@ El objetivo de esto es crear una herramienta muy versatil en el campo de las red
 
 -escaner normal >> escaneo mas lento pero en ocaciones mas fiable
 
--escaner selectivo >> 
+-escaner selectivo >> escanea solo los puertos que elijas 
 
 ### escaneo de handshake incompleto (solo linux)(requiere sudo):
 
