@@ -21,7 +21,7 @@ def inicio_scan(msg):
     #solo se llama cuando son escaneos normales o selectivos 
     print(Fore.WHITE+f'\n\n#################################################')
     print(Fore.WHITE+msg)
-    print('\n"[+] esc" para salir\n')
+    print('\n[+] "esc" para salir\n')
     if param.timeout == None:
         lat_prom= latencia(param.ip)
         tim = timeout(lat_prom)

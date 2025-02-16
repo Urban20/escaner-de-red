@@ -19,6 +19,20 @@ El objetivo de esto es crear una herramienta muy versatil en el campo de las red
 
 -busqueda aleatoria de ips con gran posibilidad de encontrar puertos abiertos
 
+
+### escaneos de hadshake completo (libreria socket):
+
+-escaner agresivo >> escaneo rapido
+
+-escaner normal >> escaneo mas lento pero en ocaciones mas fiable
+
+-escaner selectivo >> 
+
+### escaneo de handshake incompleto (solo linux)(requiere sudo):
+
+-escaner syn >> mas silencioso, permite ver que puertos estan filtrados (parametro >> -syn o --syn)
+
+
 ## Uso:
 
 el script se usa en linea de comandos y su escritura es la siguiente:
@@ -27,15 +41,17 @@ python scip3.py -ip [ip objetivo] (puede ser un dominio)  [parametro]
 
 
 
-ejemplos:
+### ejemplos:
 
-scip -ip www.google.com -s ---> esto busca automaticamente en shodan, busca su geolocalizacion y su reputacion
+python scip3.py -ip www.google.com -s ---> esto busca automaticamente en shodan, busca su geolocalizacion y su reputacion
 
-scip -ip www.google.com -a ---> realiza un escaneo "agresivo". Se trata de un escaneo en multihilo lo cual lo hace muy rapido pero no siempre funciona
+python scip3.py -ip www.google.com -a ---> realiza un escaneo "agresivo". Se trata de un escaneo en multihilo lo cual lo hace muy rapido pero no siempre funciona
 
-scip -ip www.google.com -n ---> es un escaneo mas lento pero mas fiable, hace ping a la ip y se basa en dicha latencia para regular la velocidad del escaneo, puede usarse con -i para obtener encabezados de paginas web, tambien puede usarse con -t para proporcionar manualmente un timeout
+python scip3.py -ip www.google.com -n ---> es un escaneo mas lento pero mas fiable, hace ping a la ip y se basa en dicha latencia para regular la velocidad del escaneo, puede usarse con -i para obtener encabezados de paginas web, tambien puede usarse con -t para proporcionar manualmente un timeout
 
 --> para el caso de python scip3.py es igual solo que se reemplaza la palabra scip
+
+python scip3.py -ip www.google.com -syn ---> escaneos syn (solo linux), se puede acompañar de -t y -r
 
 ### parametros:
   

@@ -247,7 +247,8 @@ parametros:
     
   -hl, --hilo                              *se utiliza con -a 
                                             setea la cantidad de hilos en paralelo (16 hilos por defecto)
-    '''
+                                                
+  -r, --reintento                          * parametro para escaneos syn, setea el numeros de reintentos para recibir informacion de un puerto        '''
     
     print(f'\n{data.logo}')
     print(Fore.CYAN+'github: https://github.com/Urban20')
