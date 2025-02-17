@@ -58,7 +58,9 @@ logging.basicConfig(filename='registro.log',
 logging.warning('iniciando ejecucion de la herramienta...')
 init()
 deten = False   
+# q  contador --> lleva un conteo de puertos escaneados al escanear con un escaneo normal de handshake completo
 q = 0
+# n contador --> cuenta la cantidad de ips encontradas, cuando es mayor al parametro de buscar, detiene la funcion de busqueda
 n = 0
 
 def cargar_json(archivo):
@@ -228,7 +230,7 @@ parametros:
   -i, --info                              *Uso: este parametro se combina con -a y -n
                                            funcion: muestra informacion de los encabezados en caso de encontrarse un puerto que apunta a un html
 
-  -l, --lectura                           *lee el archivo scannerip.txt y muestra su contenido
+  -l, --lectura                           *lee el archivo .txt donde el usuario guarda las ips escaneadas y muestra su contenido
 
   -t, --timeout                           *setea un timeout especifico cuando se utiliza el parametro -n
 
@@ -415,18 +417,9 @@ def scan_normal(ip,timeout):
         logging.critical('ocurrio un error inesperado en el escaneo normal')
 
     finally:
-    
-        if data.p_abiertos:
-            if params.param.info:
-                for x in data.p_abiertos:
-                    informacion(params.param.ip,x)
-           
-            time.sleep(1)
-            
-            preg_informe()
+        time.sleep(1)   
+        preg_informe()
                   
-        data.p_abiertos.clear()
-
 def scan_selectivo(ip,timeout,puertos):
     logging.info('iniciando escaneo selectivo...')
     data_p = cargar_json('data_puertos.json')

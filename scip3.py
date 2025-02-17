@@ -59,7 +59,7 @@ def crear_crawler(ip_):
     crawler.scrapping_shodan()
     crawler.obtener_links()
 
-
+# hilos por defecto
 if param.hilo == None:
     hilo_= 100
 else:
@@ -99,11 +99,7 @@ try:
 
             if not p_abiertos:
                 print(Fore.RED+'\n[+] ningun puerto encontrado\n')        
-                
-            if param.info:
-                for x in p_abiertos:
-                    informacion(ip,x)
-            
+               
             preg_informe()
         
         else:
@@ -152,10 +148,7 @@ try:
             scan= inicio_scan(msg='[+] escaneo selectivo en curso...')
 
             scan_selectivo(param.ip,scan,param.selectivo)
-            if param.info:
-                for x in p_abiertos:
-                    informacion(param.ip,x)
-
+            
         else:
             print(Fore.RED+'\n[+] especificar parametro [-ip]\n')
     
@@ -219,8 +212,11 @@ try:
                 print(Fore.GREEN+'\n[+] la informacion fue guardada\n')
             else:
                 print(Fore.RED+'\n[+] la informacion no fue guardada\n')
+                
 
-    
+    if param.info and p_abiertos:
+        for x in p_abiertos:
+            informacion(param.ip,int(x))
 
     if param.ayuda:
         ayuda()
