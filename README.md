@@ -32,6 +32,7 @@ El objetivo de esto es crear una herramienta muy versatil en el campo de las red
 
 -escaner syn >> mas silencioso, permite ver que puertos estan filtrados (parametro >> -syn o --syn)
 
+agregar -no_filtrado para mostrar solamente los puertos abiertos
 
 ## Uso:
 

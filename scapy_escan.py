@@ -38,7 +38,8 @@ def escaneo_syn(ip,puerto,timeout):
                     p_abiertos.append(puerto)
                 
         else:
-            escaneo_ack(ip=ip,puerto=puerto,timeout_=timeout)
+            if not param.no_filtrado:
+                escaneo_ack(ip=ip,puerto=puerto,timeout_=timeout)
 
     except AttributeError:
         pass
