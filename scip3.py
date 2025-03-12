@@ -193,7 +193,7 @@ try:
         
         #buscar ips publicas
     elif param.buscar != None and not param.normal and param.ip == None:
-    
+        info('iniciando busqueda de ips publicas...')
         print(Fore.GREEN+'\n[+] rastreando ips publicas...\n')
         threading.Thread(target=detener).start()
     
@@ -210,9 +210,12 @@ try:
                 for ip in lista_ips:
                     agregar_arch(ip)
                 print(Fore.GREEN+'\n[+] la informacion fue guardada\n')
+
             else:
                 print(Fore.RED+'\n[+] la informacion no fue guardada\n')
-                
+
+        info('busqueda finalizada')    
+        func.deten = True
 
     if param.info and p_abiertos:
         for x in p_abiertos:
@@ -240,3 +243,5 @@ except Exception as e:
     exit(1)
 finally:
     warning('la herramienta fue finalizada')
+    exit(0)
+    
